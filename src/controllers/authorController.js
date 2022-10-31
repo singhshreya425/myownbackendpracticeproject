@@ -10,6 +10,6 @@ const getAuthorsData= async function (req, res) {
     let authors = await AuthorModel.find()
     res.send({data: authors})
 }
-
+//logic for login authentications
 module.exports.createAuthor= createAuthor
 module.exports.getAuthorsData= getAuthorsData
