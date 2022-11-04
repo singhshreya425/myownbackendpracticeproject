@@ -1,5 +1,5 @@
 const UserModel= require("../models/userModel")
-
+const mongoose =require('mongoose')
 
 
 
@@ -11,23 +11,26 @@ const basicCode= async function(req, res, next) {
     }
 
 const createUser= async function (req, res) {
+    let data = req.body
+    let UserCreated = await UserModel.create(data)
+    res.send({data: UserCreated})
     // Remember that inside request object we already know multiple attributes
     // Examples - body(req.body), query(req.query), params(req.params)
-    let body = req.body
-    let headers = req.headers
-    console.log("The body attribute of this request is: ", body)
-    console.log("The headers attribute of thisd request is: ",headers)
-    let hostValue = headers.host
-    console.log("The host header of this request is: ",hostValue)
-    // Bracket notation is safe to use when dealing with keys that have a hyphen
-    let contentType = headers["content-type"]
-    console.log("The content type header of this request is: ",contentType)
+    // let body = req.body
+    // let headers = req.headers
+    // console.log("The body attribute of this request is: ", body)
+    // console.log("The headers attribute of thisd request is: ",headers)
+    // let hostValue = headers.host
+    // console.log("The host header of this request is: ",hostValue)
+    // // Bracket notation is safe to use when dealing with keys that have a hyphen
+    // let contentType = headers["content-type"]
+    // console.log("The content type header of this request is: ",contentType)
     
     //Set a header in request
-    req.headers["year"] = 2022
-    console.log("The updated headers attribute of this request is: ",req.headers)
-    res.setHeader("message","Hi there!")
-    res.send({msg: "Hi"})
+    // req.headers["year"] = 2022
+    // console.log("The updated headers attribute of this request is: ",req.headers)
+    // res.setHeader("message","Hi there!")
+    // res.send({msg: "Hi"})
 }
 
 const getUsersData= async function (req, res) {
