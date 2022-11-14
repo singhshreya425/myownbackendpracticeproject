@@ -5,7 +5,7 @@ const blogSchema= new mongoose.Schema({
 
     title:{
         type:String,
-        required: true
+        
     },
     body:{
         type:String,
@@ -23,14 +23,14 @@ const blogSchema= new mongoose.Schema({
     },
      subcategory:{ },
 
-     createdAt: Date.now(),
-     updatedAt: Date.now(),
-     deletedAt:Date.now(),
+     //createdAt: Date.now(),
+     //updatedAt: Date.now(),
+     //deletedAt:Date.now(),
      isDeleted:{
         type:Boolean,
         default:false
      },
-     publishedAt:Date.now(),
+     //publishedAt:Date.now(),
      isPublished:{
         type:Boolean,
         default:false
