@@ -1,10 +1,11 @@
-const authorModel = require("../models/author");
+const authorModel = require("../models/authorModel.js");
 
 
 
 
 const createAuthor= async function (req, res) {
-   try {let data = req.body
+   try {
+    let data = req.body
 
     let authorData=await authorModel.create(data);
      
@@ -12,7 +13,7 @@ const createAuthor= async function (req, res) {
 }
 
 catch (error) {
-    res.status(500).send({ msg: error })
+    res.status(500).send({ msg: error.message })
   }
 }
 
