@@ -10,10 +10,10 @@ const authenticate = (req, res, next) => {
         if (!decodedToken) return res.status(401).send({ status: false, msg: "token is invalid" });
 
         let id = req.params.authorId;
-       // if (id == decodedToken.userId)
-         return next();
-        //else return res.status(401).send({ status: false, msg: "your are not authorised !" });
+        if (id !== decodedToken.authorId)
     
+        return res.status(401).send({ status: false, msg: "your are not authorised !" });
+        next();
     }
     catch (error) {
         res.status(500).send({ staus: false, msg: error });
