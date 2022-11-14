@@ -50,7 +50,18 @@ const login = async function (req, res) {
   try {
       let author = req.body
       let email = req.body.email
-      let password = req.body.password
+      let password = req.body.password;
+      
+     
+      var validateEmail = function(email) {
+        var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        return re.test(email)
+    };
+    let Check=validateEmail(email);
+    console.log(Check)
+        if(Check!=true){
+            res.status(400).send({status:false,msg:"email is not valid"})
+        }
       if (Object.keys(author).length == 0) {
           return res.status(400).send({ status: false, msg: "Invalid request Please provide valid Author  details" });
       }

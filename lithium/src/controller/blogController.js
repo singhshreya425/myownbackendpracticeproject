@@ -93,6 +93,10 @@ const deleteOneBlog = async function(req, res) {
     }
 }
 
+
+
+
+
         
 
 
@@ -107,6 +111,7 @@ module.exports.getBlogsData = getBlogsData
 module.exports.updateBlog = updateBlog
 module.exports.deleteBlog=deleteBlog;
 module.exports.deleteOneBlog=deleteOneBlog;
+
 
 
 
