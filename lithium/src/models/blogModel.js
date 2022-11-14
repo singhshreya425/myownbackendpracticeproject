@@ -5,8 +5,7 @@ const blogSchema= new mongoose.Schema({
 
     title:{
         type:String,
-        
-    },
+         },
     body:{
         type:String,
         required:true
@@ -22,15 +21,10 @@ const blogSchema= new mongoose.Schema({
         requird:true
     },
      subcategory:{ },
-
-     //createdAt: Date.now(),
-     //updatedAt: Date.now(),
-     //deletedAt:Date.now(),
      isDeleted:{
         type:Boolean,
         default:false
      },
-     //publishedAt:Date.now(),
      isPublished:{
         type:Boolean,
         default:false
