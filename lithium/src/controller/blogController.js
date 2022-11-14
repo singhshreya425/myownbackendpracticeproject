@@ -43,7 +43,74 @@ const getBlogsData = async (req, res) => {
 
 
 
+const updateBlog = async function(req, res) {
+    try {
+        let title= req.body.title; 
+        let body=req.body.body; 
+        let tags=req.body.tags;
+        let subcategory=req.body.subcategory;
+        let id=req.params.blogId;
+        console.log("fsdfds",id)
+        let getdata=await blogModel.findById(id)
+        let data= await blogModel.updateMany({_id:id},{$set:{title:title}})
+        
+        
+        res.status(201).send({status:true,msg:data})
+    }
+    catch (error) {
+        res.status(500).send({ msg: error.message })
+    }
+}
 
 
-module.exports.createBlog=createBlog
-module.exports.getBlogsData=getBlogsData;
+const deleteBlog = async function(req, res) {
+    try {
+        
+        let id=req.params.blogId;
+        //let getdata=await blogModel.findById(id)
+        let data= await blogModel.updateMany({_id:id},{$set:{isDeleted:true}})
+        
+        
+        res.status(201).send({status:true,msg:data})
+    }
+    catch (error) {
+        res.status(500).send({ msg: error.message })
+    }
+}
+
+
+const deleteOneBlog = async function(req, res) {
+    try {
+        let data=req.query.subcategory;
+        let data1= await blogModel.updateMany({subcategory:data},{$set:{isDeleted:true}})
+        
+        
+        res.status(201).send({status:true,msg:data1})
+       
+    }
+    catch (error) {
+        res.status(500).send({ msg: error.message })
+    }
+}
+
+        
+
+
+        
+
+
+
+
+
+module.exports.createBlog = createBlog
+module.exports.getBlogsData = getBlogsData
+module.exports.updateBlog = updateBlog
+module.exports.deleteBlog=deleteBlog;
+module.exports.deleteOneBlog=deleteOneBlog;
+
+
+
+
+
+
+
