@@ -118,7 +118,7 @@ const deleteBlogQuery = async (req, res) => {
             return res.status(404).send({ msg: "Document is already Deleted " })
 
         const updatedBlog = await blogModel.updateMany(queryParams, 
-            { $set: { isDeleted: true, isPublished: false } }, 
+            { $set: { isDeleted: true, isPublished: false,deletedAt:Date.now()} }, 
             { new: true });
         return res.status(200).send({ status: true, data: updatedBlog })
     }

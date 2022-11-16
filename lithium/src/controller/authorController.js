@@ -26,13 +26,13 @@ const createAuthor = async function (req, res) {
         let titleEnum = ['Mr', 'Mrs', 'Miss']
         
         var validateEmail = function (email) {
-            var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            var re = /[a-zA_Z1-90]{3,}@[A-za-z]{3,}[.]{1}[a-zA_Z]{2,}/;
             return re.test(email)
         };
 
         let Check = validateEmail(email);
         console.log("validateEmail",Check)
-        if (Check != true) {
+        if (Check == false) {
             res.status(400).send({ status: false, msg: "email is not valid" })
         }
 
@@ -41,7 +41,7 @@ const createAuthor = async function (req, res) {
                 status: false,
                 msg: "please provide login details",
             });
-        }
+        }  
 
 
         if (!titleEnum.includes(author.title)) {
