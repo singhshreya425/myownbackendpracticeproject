@@ -51,7 +51,7 @@ const updateBlog = async function (req, res) {
         let title = req.body.title
         let body = req.body.body
         let tags = req.body.tags
-        let subCategory = req.body.subCategory
+        let subcategory = req.body.subcategory
 
         if (Object.keys(author).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid Author  details" });
@@ -65,7 +65,7 @@ const updateBlog = async function (req, res) {
         let blogs = await blogModel.findOneAndUpdate({ _id: inputId },
             {
                 $set: { title: title, body: body, isPublished: true, publishedAt: date },
-                $push: { tags: tags, subCategory: subCategory }
+                $push: { tags: tags, subcategory: subcategory }
             },
             { new: true })
 
@@ -112,7 +112,7 @@ const deleteBlogQuery = async (req, res) => {
         if (Object.keys(queryParams).length == 0)
             return res.status(400).send({ status: false, msg: "Please enter some data in the body" });
 
-        const blog = await blogModel.find({ $and: [queryParams, { isDeleted: false }, { isPublished: true }] });
+        const blog = await blogModel.find({ $and: [queryParams, { isDeleted: true }, { isPublished: false }] });
 
         if (blog.isDeleted == true || blog.length == 0)
             return res.status(404).send({ msg: "Document is already Deleted " })
