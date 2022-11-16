@@ -17,29 +17,27 @@ const createAuthor = async function (req, res) {
             });
         }
 
-        var validateEmail = function (email) {
-            var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-            return re.test(email)
-        };
-
-
-
+        
 
         if (!author.fname) return res.status(400).send({ msg: " First name is required " });
         if (!author.lname) return res.status(400).send({ msg: " Last name is required " });
         if (!author.email) return res.status(400).send({ msg: " email is required " });
         if (!author.password) return res.status(400).send({ msg: " password is required " });
         let titleEnum = ['Mr', 'Mrs', 'Miss']
-
+        
+        var validateEmail = function (email) {
+            var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            return re.test(email)
+        };
 
         let Check = validateEmail(email);
-        console.log(Check)
+        console.log("validateEmail",Check)
         if (Check != true) {
             res.status(400).send({ status: false, msg: "email is not valid" })
         }
 
         if (email.trim().length == 0 || password.trim().length == 0) {
-            return res.status(400).send({
+            return res.status(400).send({ 
                 status: false,
                 msg: "please provide login details",
             });

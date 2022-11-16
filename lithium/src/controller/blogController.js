@@ -108,7 +108,7 @@ const deleteBlog = async function (req, res) {
 
 const deleteBlogQuery = async (req, res) => {
     try {
-        const queryParams = req.query;
+        const queryParams = req.query;  //category, authorid, tag name, subcategory name
         if (Object.keys(queryParams).length == 0)
             return res.status(400).send({ status: false, msg: "Please enter some data in the body" });
 
@@ -117,7 +117,8 @@ const deleteBlogQuery = async (req, res) => {
         if (blog.isDeleted == true || blog.length == 0)
             return res.status(404).send({ msg: "Document is already Deleted " })
 
-        const updatedBlog = await blogModel.updateMany(queryParams, { $set: { isDeleted: true, isPublished: false } }, 
+        const updatedBlog = await blogModel.updateMany(queryParams, 
+            { $set: { isDeleted: true, isPublished: false } }, 
             { new: true });
         return res.status(200).send({ status: true, data: updatedBlog })
     }

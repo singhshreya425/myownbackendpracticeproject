@@ -31,9 +31,6 @@ const authorize= function ( req, res, next) {
   if (!decodedToken)
   return res.status(401).send({ status: false, msg: "token is invalid" });
 
-   //<-------Passing LoggedIn UserId into Route Handler------>//
-  // let userTobeModified =req.body.authorId  
-  // let userLoggedIn = decodedToken.userId  
   
     if (req.body.authorId  == decodedToken.userId ) return next();
       else return res.status(401).send({ status: false, msg: "you are not authorised !" });
