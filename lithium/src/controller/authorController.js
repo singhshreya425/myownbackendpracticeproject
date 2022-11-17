@@ -9,7 +9,7 @@ const createAuthor = async function (req, res) {
         let password = req.body.password;
         if (Object.keys(author).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid Author  details" });
-        }
+        } 
 
         if (email.trim().length == 0 || password.trim().length == 0) {
             return res.status(400).send({ status: false, msg: "please provide login details", });
@@ -23,7 +23,7 @@ const createAuthor = async function (req, res) {
 
         //Email id Validation
         var validateEmail = function (email) {
-            var re = /[a-zA_Z1-90]{3,}@[A-za-z]{3,}[.]{1}[a-zA_Z]{2,}/;
+            var re = /[a-zA-Z_1-90]{3,}@[A-za-z]{3,}[.]{1}[a-zA-Z]{2,}/;
             return re.test(email)
         };
 
@@ -40,22 +40,21 @@ const createAuthor = async function (req, res) {
         };
 
         let Checkpassword = validatepassword(password);
-        console.log("validateEmail", Checkpassword)
         if (Checkpassword == false) {
           return  res.status(400).send({ status: false, msg: "Password is not valid" })
         }
 
         let titleEnum = ['Mr', 'Mrs', 'Miss']
         if (!titleEnum.includes(author.title)) {
-            res.status(400).send({ status: false, msg: "title should be Mr, Mrs or Miss" })
+           return res.status(400).send({ status: false, msg: "title should be Mr, Mrs or Miss" })
         }
 
         let authorCreated = await authorModel.create(author)
 
 
-        res.status(201).send({ data: authorCreated })
+       return res.status(201).send({ data: authorCreated })
     } catch (error) {
-        res.status(500).send({ msg: error.message })
+       return res.status(500).send({ msg: error.message })
     }
 }
 
@@ -79,7 +78,7 @@ const login = async function (req, res) {
 
 
         let loggedAuthor = await authorModel.findOne({ email: email, password: password })
-        if (!loggedAuthor) return res.status(404).send({ msg: "Email or Password is Incorrect!" })
+        if (!loggedAuthor) return res.status(400).send({ msg: "Email or Password is Incorrect!" })
 
         let token = jwt.sign(
             {
@@ -90,9 +89,9 @@ const login = async function (req, res) {
             "Secret-Key-lithium", { expiresIn: '12h' }
         )
 
-        res.status(200).send({ msg: "User logged in successfully!", loggedAuthor, token })
+     return res.status(201).send({ msg: "User logged in successfully!", loggedAuthor, token })
     } catch (error) {
-        res.status(500).send({ msg: error.message })
+       return res.status(500).send({ msg: error.message })
     }
 }
 

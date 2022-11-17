@@ -20,9 +20,9 @@ const createBlog = async (req, res) => {
 
         let blogCreated = await blogModel.create(Blog)
 
-        res.status(201).send({ status: true, data: blogCreated })
+       return res.status(201).send({ status: true, data: blogCreated })
     } catch (error) {
-        res.status(500).send({ msg: error.message })
+       return res.status(500).send({ msg: error.message })
     }
 }
 
@@ -40,11 +40,11 @@ const getBlogsData = async (req, res) => {
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid blog  details" });
         }
-        res.status(200).send({ msg: data })
+       return res.status(200).send({ msg: data })
 
     }
     catch (error) {
-        res.status(500).send({ msg: error.message })
+        return res.status(500).send({ msg: error.message })
     }
 }
 
@@ -89,10 +89,10 @@ const updateBlog = async function (req, res) {
 
 
         if (!blogs) return res.status(404).send({ msg: "no blog found" })
-        res.status(200).send({ msg: blogs })
+        return res.status(200).send({ msg: blogs })
     }
     catch (error) {
-        res.status(500).send({ msg: error.message })
+        return res.status(500).send({ msg: error.message })
     }
 }
 
@@ -115,7 +115,7 @@ const deleteBlog = async function (req, res) {
         }
 
         let alert = await blogModel.findOne({ _id: inputId, isDeleted: true })
-        if (alert) return res.status(409).send({ msg: "Blog already deleted" })
+        if (alert) return res.status(400).send({ msg: "Blog already deleted" })
 
         let data = await blogModel.findOneAndUpdate({ _id: inputId },
             { $set: { isDeleted: true, deletedAt: date } },
@@ -123,11 +123,11 @@ const deleteBlog = async function (req, res) {
 
         if (!data) return res.status(404).send({ msg: "no data found" })
 
-        res.status(200).send({ status: true, msg: data })
+      return  res.status(200).send({ status: true, msg: data })
 
     }
     catch (error) {
-        res.status(500).send({ msg: error.message })
+       return res.status(500).send({ msg: error.message })
     }
 }
 
@@ -153,7 +153,7 @@ const deleteBlogQuery = async (req, res) => {
         return res.status(200).send({ status: true, data: updatedBlog })
     }
     catch (err) {
-        res.status(500).send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 }
 

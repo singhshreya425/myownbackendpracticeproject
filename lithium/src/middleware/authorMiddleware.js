@@ -30,10 +30,10 @@ const authorize= function ( req, res, next) {
   return res.status(401).send({ status: false, msg: "token is invalid" });
 
     if (req.body.authorId  == decodedToken.authorId ) return next();
-      else return res.status(401).send({ status: false, msg: "you are not authorised !" });
+      else return res.status(403).send({ status: false, msg: "you are not authorised !" });
 
     }catch(error){
-      res.status(500).send({msg: error.message})
+      return res.status(500).send({msg: error.message})
     }
   }
 
