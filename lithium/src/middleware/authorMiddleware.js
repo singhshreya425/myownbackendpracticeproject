@@ -2,17 +2,15 @@ const jwt = require('jsonwebtoken');
 
 const authenticate = (req, res, next) => {
     try {
-        let token = req.headers["x-auth-key"];
+        let token = req.headers["x-api-key"];
+        let id=req.params.authorId;
+
         if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
 
         let decodedToken = jwt.verify(token, "Secret-Key-lithium");
-
+        
         if (!decodedToken) return res.status(401).send({ status: false, msg: "token is invalid" });
-
-      //   let id = req.params.authorId;
-      //   if (id !== decodedToken.authorId)
-      // console.log(id,decodedToken.authorId)
-      //   return res.status(401).send({ status: false, msg: "your are not authorised !" });
+        req.decodedToken=decodedToken;
         next();
     }
     catch (error) {
@@ -31,7 +29,6 @@ const authorize= function ( req, res, next) {
   if (!decodedToken)
   return res.status(401).send({ status: false, msg: "token is invalid" });
 
-  console.log(req.body.authorId,decodedToken.authorId)
     if (req.body.authorId  == decodedToken.authorId ) return next();
       else return res.status(401).send({ status: false, msg: "you are not authorised !" });
 
