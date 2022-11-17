@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const authorMiddleware = require("../middleware/authorMiddleware");
-const authorController = require("../controller/authorController");
-const blogController = require("../controller/blogController");
+const authorMiddleware = require("../middleware/authorMiddleware.js");
+const authorController = require("../controller/authorController.js");
+const blogController = require("../controller/blogController.js");
 
 //<-------------This API used for Create Author---------------->//
-router.post("/author",authorController.createAuthor);
+router.post("/authors",authorController.createAuthor);
 //<--------------This API used for Log in Author------------------>// 
 router.post("/logIn",authorController.login);
 //<--------------------This API used for Create Blogs-------------->//

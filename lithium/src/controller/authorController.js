@@ -1,7 +1,7 @@
 const authorModel = require("../models/authorModel.js");
 const jwt = require("jsonwebtoken");
 
-//<-------------This API used for Create Author---------------->//
+//<-------------This API used for Create Authors---------------->//
 const createAuthor = async function (req, res) {
     try {
         let author = req.body
@@ -12,19 +12,14 @@ const createAuthor = async function (req, res) {
         }
 
         if (email.trim().length == 0 || password.trim().length == 0) {
-            return res.status(400).send({
-                status: false,
-                msg: "please provide login details",
-            });
+            return res.status(400).send({ status: false, msg: "please provide login details", });
         }
-
-
 
         if (!author.fname) return res.status(400).send({ msg: " First name is required " });
         if (!author.lname) return res.status(400).send({ msg: " Last name is required " });
         if (!author.email) return res.status(400).send({ msg: " email is required " });
         if (!author.password) return res.status(400).send({ msg: " password is required " });
-        let titleEnum = ['Mr', 'Mrs', 'Miss']
+
 
         //Email id Validation
         var validateEmail = function (email) {
@@ -33,32 +28,24 @@ const createAuthor = async function (req, res) {
         };
 
         let Check = validateEmail(email);
-        console.log("validateEmail", Check)
         if (Check == false) {
-            res.status(400).send({ status: false, msg: "email is not valid" })
+           return res.status(400).send({ status: false, msg: "email is not valid" })
         }
 
         // Password Id Validation
         var validatepassword = function (password) {
             var re = /[A-Z]{1,}[a-z]{3,}[@#$%]{1,}[1-90]{1,}/;
+            //Minimum 1 Upper add, Minimum 3 Lower Case,Mininum 1 specia; Symbol like (@#$%),mininum 1 number
             return re.test(password)
         };
 
         let Checkpassword = validatepassword(password);
         console.log("validateEmail", Checkpassword)
         if (Checkpassword == false) {
-            res.status(400).send({ status: false, msg: "Password is not valid" })
+          return  res.status(400).send({ status: false, msg: "Password is not valid" })
         }
 
-
-        if (email.trim().length == 0 || password.trim().length == 0) {
-            return res.status(400).send({
-                status: false,
-                msg: "please provide login details",
-            });
-        }
-
-
+        let titleEnum = ['Mr', 'Mrs', 'Miss']
         if (!titleEnum.includes(author.title)) {
             res.status(400).send({ status: false, msg: "title should be Mr, Mrs or Miss" })
         }
@@ -76,19 +63,15 @@ const createAuthor = async function (req, res) {
 //<--------------This API used for Log in Author------------------>// 
 const login = async function (req, res) {
     try {
-        let author = req.body
         let email = req.body.email
         let password = req.body.password;
+        let author = req.body;
         
         if (Object.keys(author).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid Author  details" });
         }
-
         if (email.trim().length == 0 || password.trim().length == 0) {
-            return res.status(400).send({
-                status: false,
-                msg: "please provide login details",
-            });
+            return res.status(400).send({status: false,msg: "please provide login details"});
         }
 
         if (!email) return res.status(400).send({ msg: " email is required " })

@@ -35,8 +35,8 @@ const getBlogsData = async (req, res) => {
         let isValid = mongoose.Types.ObjectId.isValid(id)
         if (!isValid) return res.status(400).send({ msg: "enter valid objectID" })
 
-        let data = await blogModel.find({ authorId: id.toString() })
-
+        let data = await blogModel.find({ authorId: id })
+        console.log(id, data)
         if (Object.keys(data).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid blog  details" });
         }
@@ -52,7 +52,7 @@ const getBlogsData = async (req, res) => {
 const updateBlog = async function (req, res) {
     try {
         let inputId = req.params.blogId
-
+    
         if (!inputId) return res.status(400).send({ status: false, msg: "blog id required" })
         let isValid = mongoose.Types.ObjectId.isValid(inputId)
         if (!isValid) return res.status(400).send({ msg: "enter valid objectID" })
@@ -104,7 +104,7 @@ const deleteBlog = async function (req, res) {
 
         let isValid = mongoose.Types.ObjectId.isValid(inputId)
         if (!isValid) return res.status(400).send({ msg: "enter valid objectID" })
-       
+
         let date = Date.now()
 
         let data1 = await blogModel.findOne({ _id: inputId })
@@ -114,7 +114,6 @@ const deleteBlog = async function (req, res) {
 
         }
 
-        console.log(data1.authorId,req.body.authorId)
         let alert = await blogModel.findOne({ _id: inputId, isDeleted: true })
         if (alert) return res.status(409).send({ msg: "Blog already deleted" })
 
@@ -135,16 +134,16 @@ const deleteBlog = async function (req, res) {
 //<----------------These APIs used for Deleting Blogs by query of Logged in Author--------->//
 const deleteBlogQuery = async (req, res) => {
     try {
-         
+
         const queryParams = req.query;  //category, authorid, tag name, subcategory name
         if (Object.keys(queryParams).length == 0)
             return res.status(400).send({ status: false, msg: "Please enter some data in the body" });
 
-            
+
 
         const blog = await blogModel.find({ $and: [queryParams, { isDeleted: true }, { isPublished: false }] });
 
-        
+
         if (Object.keys(blog).length !== 0)
             return res.status(404).send({ msg: "Document is already Deleted " })
 
