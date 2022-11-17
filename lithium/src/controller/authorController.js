@@ -18,13 +18,14 @@ const createAuthor = async function (req, res) {
             });
         }
 
-        
+
 
         if (!author.fname) return res.status(400).send({ msg: " First name is required " });
         if (!author.lname) return res.status(400).send({ msg: " Last name is required " });
         if (!author.email) return res.status(400).send({ msg: " email is required " });
         if (!author.password) return res.status(400).send({ msg: " password is required " });
         let titleEnum = ['Mr', 'Mrs', 'Miss']
+
         //Email id Validation
         var validateEmail = function (email) {
             var re = /[a-zA_Z1-90]{3,}@[A-za-z]{3,}[.]{1}[a-zA_Z]{2,}/;
@@ -32,7 +33,7 @@ const createAuthor = async function (req, res) {
         };
 
         let Check = validateEmail(email);
-        console.log("validateEmail",Check)
+        console.log("validateEmail", Check)
         if (Check == false) {
             res.status(400).send({ status: false, msg: "email is not valid" })
         }
@@ -44,17 +45,18 @@ const createAuthor = async function (req, res) {
         };
 
         let Checkpassword = validatepassword(password);
-        console.log("validateEmail",Checkpassword)
+        console.log("validateEmail", Checkpassword)
         if (Checkpassword == false) {
             res.status(400).send({ status: false, msg: "Password is not valid" })
         }
 
+
         if (email.trim().length == 0 || password.trim().length == 0) {
-            return res.status(400).send({ 
+            return res.status(400).send({
                 status: false,
                 msg: "please provide login details",
             });
-        }  
+        }
 
 
         if (!titleEnum.includes(author.title)) {
@@ -77,17 +79,7 @@ const login = async function (req, res) {
         let author = req.body
         let email = req.body.email
         let password = req.body.password;
-
-
-        var validateEmail = function (email) {
-            var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-            return re.test(email)
-        };
-        let Check = validateEmail(email);
-        if (Check != true) {
-            res.status(400).send({ status: false, msg: "email is not valid" })
-        }
-
+        
         if (Object.keys(author).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid Author  details" });
         }
