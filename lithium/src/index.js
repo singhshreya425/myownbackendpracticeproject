@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect("mongodb+srv://ravisingh007ravi:Ravi1234@cluster0.gdhqup6.mongodb.net/?retryWrites=true&w=majority", {
     useNewUrlParser: true
 })
-.then( () => console.log("MongoDb is connected"))
+.then( () => console.log("MongoDb is connectedimage."))
 .catch ( err => console.log(err) )
 
 

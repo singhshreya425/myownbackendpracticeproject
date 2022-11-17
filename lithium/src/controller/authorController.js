@@ -25,7 +25,7 @@ const createAuthor = async function (req, res) {
         if (!author.email) return res.status(400).send({ msg: " email is required " });
         if (!author.password) return res.status(400).send({ msg: " password is required " });
         let titleEnum = ['Mr', 'Mrs', 'Miss']
-        
+        //Email id Validation
         var validateEmail = function (email) {
             var re = /[a-zA_Z1-90]{3,}@[A-za-z]{3,}[.]{1}[a-zA_Z]{2,}/;
             return re.test(email)
@@ -35,6 +35,18 @@ const createAuthor = async function (req, res) {
         console.log("validateEmail",Check)
         if (Check == false) {
             res.status(400).send({ status: false, msg: "email is not valid" })
+        }
+
+        // Password Id Validation
+        var validatepassword = function (password) {
+            var re = /[A-Z]{1,}[a-z]{3,}[@#$%]{1,}[1-90]{1,}/;
+            return re.test(password)
+        };
+
+        let Checkpassword = validatepassword(password);
+        console.log("validateEmail",Checkpassword)
+        if (Checkpassword == false) {
+            res.status(400).send({ status: false, msg: "Password is not valid" })
         }
 
         if (email.trim().length == 0 || password.trim().length == 0) {
