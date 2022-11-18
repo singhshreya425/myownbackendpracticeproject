@@ -7,9 +7,9 @@ const blogController = require("../controller/blogController.js");
 //<-------------This API used for Create Author---------------->//
 router.post("/authors",authorController.createAuthor);
 //<--------------This API used for Log in Author------------------>// 
-router.post("/logIn",authorController.login);
+router.post("/login",authorController.login);
 //<--------------------This API used for Create Blogs-------------->//
-router.post("/blog",authorMiddleware.authenticate,blogController.createBlog);
+router.post("/blogs",authorMiddleware.authenticate,blogController.createBlog);
 //<----------------This API used for Fetch Blogs of Logged in Author----------->//
 router.get("/blogs/:authorId",authorMiddleware.authenticate,blogController.getBlogsData);
 //<----------------This API used for Update Blogs of Logged in Author---------->//

@@ -29,16 +29,16 @@ const createBlog = async (req, res) => {
 //<----------------This API used for Fetch Blogs of Logged in Author----------->//
 const getBlogsData = async (req, res) => {
     try {
-        let id = req.params.authorId;
+        let id = req.params.authorId;//
         if (!id) return res.status(400).send({ status: false, msg: "id is required" })
 
         let isValid = mongoose.Types.ObjectId.isValid(id)
         if (!isValid) return res.status(400).send({ msg: "enter valid objectID" })
 
         let data = await blogModel.find({ authorId: id })
-        console.log(id, data)
+        
         if (Object.keys(data).length == 0) {
-            return res.status(400).send({ status: false, msg: "Invalid request Please provide valid blog  details" });
+            return res.status(404).send({ status: false, msg: "No data Found" });
         }
        return res.status(200).send({ msg: data })
 

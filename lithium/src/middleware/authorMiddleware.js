@@ -3,14 +3,12 @@ const jwt = require('jsonwebtoken');
 const authenticate = (req, res, next) => {
     try {
         let token = req.headers["x-api-key"];
-        let id=req.params.authorId;
 
         if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
 
         let decodedToken = jwt.verify(token, "Secret-Key-lithium");
         
         if (!decodedToken) return res.status(401).send({ status: false, msg: "token is invalid" });
-        req.decodedToken=decodedToken;
         next();
     }
     catch (error) {

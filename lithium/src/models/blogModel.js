@@ -30,21 +30,13 @@ const blogSchema= new mongoose.Schema({
         default:false
      },
      deletedAt:{
-        type : Date,
-        require : true,
-        default : Date.now
+        type : Date
     } ,
      
      publishedAt:{
-        type : Date,
-        require : true,
-        default : Date.now
+        type : Date
     } ,
      
     },{timestamps:true});
 
-
-
-
-
-    module.exports = mongoose.model('blog', blogSchema)
+module.exports = mongoose.model('blog', blogSchema)

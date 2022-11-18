@@ -4,16 +4,12 @@ const jwt = require("jsonwebtoken");
 //<-------------This API used for Create Authors---------------->//
 const createAuthor = async function (req, res) {
     try {
-        let author = req.body
+        
         let email = req.body.email;
         let password = req.body.password;
-        if (Object.keys(author).length == 0) {
+        if (Object.keys(req.body).length == 0) {
             return res.status(400).send({ status: false, msg: "Invalid request Please provide valid Author  details" });
         } 
-
-        if (email.trim().length == 0 || password.trim().length == 0) {
-            return res.status(400).send({ status: false, msg: "please provide login details", });
-        }
 
         if (!author.fname) return res.status(400).send({ msg: " First name is required " });
         if (!author.lname) return res.status(400).send({ msg: " Last name is required " });
