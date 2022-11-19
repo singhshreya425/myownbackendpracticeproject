@@ -24,16 +24,8 @@ const authenticate = (req, res, next) => {
 
 const authorize= function ( req, res, next) {
     try{
-      let token = req.headers["x-api-key"];
-      
-  if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
-  
-  let decodedToken = jwt.verify(token, "Secret-Key-lithium");
 
-  if (!decodedToken)
-  return res.status(401).send({ status: false, msg: "token is invalid" });
-
-    if (req.body.authorId  == decodedToken.authorId ) return next();
+      if (req.body.authorId  == req.decode.authorId ) return next();
       else return res.status(403).send({ status: false, msg: "you are not authorised !" });
 
     }catch(error){
