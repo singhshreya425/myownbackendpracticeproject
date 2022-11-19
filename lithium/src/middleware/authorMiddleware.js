@@ -6,10 +6,16 @@ const authenticate = (req, res, next) => {
 
         if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
 
-        let decodedToken = jwt.verify(token, "Secret-Key-lithium");
+        jwt.verify(token, "blogging site", function (err, decode) {
+          if (err) { return res.status(401).send({ status: false, data: "Authentication failed" }) }
+          req.decode = decode;
+          next();
+      })
+
+        if (!decode) return res.status(401).send({ status: false, msg: "token is invalid" });
+      
         
-        if (!decodedToken) return res.status(401).send({ status: false, msg: "token is invalid" });
-        next();
+      
     }
     catch (error) {
         res.status(500).send({ staus: false, msg: error });
