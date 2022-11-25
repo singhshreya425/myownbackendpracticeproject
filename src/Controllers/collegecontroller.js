@@ -5,34 +5,63 @@ const {validName,validfullname,validlogolink} = require('../validations/Regex_va
 
 //---------------------------------------------Create a college-------------------------------------------------------------------//
 
-const createcollege = async function(req,res){
-try {
+// const createcollege = async function(req,res){
+// try {
     
-    let data = req.body
-    let {name,fullName,logoLink} = data
+//     let data = req.body
+//     let {name,fullName,logoLink} = data
 
-    if (!name) {return res.status(400).send({status:false,msg:"Enter a name"})}
-    if (!fullName) { return res.status(400).send({status:false,msg:"Enter a fullname"})}
-    if (!logoLink){ return res.status(400).send({status:false,msg:"Enter a logoLink"})}
+//     if (!name) {return res.status(400).send({status:false,msg:"Enter a name"})}
+//     if (!fullName) { return res.status(400).send({status:false,msg:"Enter a fullname"})}
+//     if (!logoLink){ return res.status(400).send({status:false,msg:"Enter a logoLink"})}
 
-    let Duplicatecollegename = await collegemodel.findOne({name: name})
-    if (Duplicatecollegename)return res.status(400).send({status: false ,msg : "name already exist"})
+//     let Duplicatecollegename = await collegemodel.findOne({name: name})
+//     if (Duplicatecollegename)return res.status(400).send({status: false ,msg : "name already exist"})
 
-    let checkname = validName(name)
-    let checkfullname = validfullname(fullName)
-    let checkvalidlink = validlogolink(logoLink)
+//     let checkname = validName(name)
+//     let checkfullname = validfullname(fullName)
+//     let checkvalidlink = validlogolink(logoLink)
 
-    if (!checkname) return res.status(400).send({status: false ,msg : "enter valid name"})
-    if (!checkfullname)return res.status(400).send({status: false ,msg : "enter valid fullname"})
-    if(!checkvalidlink)return res.status(400).send({status: false ,msg : "enter valid logolink"})
+//     if (!checkname) return res.status(400).send({status: false ,msg : "enter valid name"})
+//     if (!checkfullname)return res.status(400).send({status: false ,msg : "enter valid fullname"})
+//     if(!checkvalidlink)return res.status(400).send({status: false ,msg : "enter valid logolink"})
 
 
-    let collegedata = await collegemodel.create(data)
-    return res.status(201).send ({status:true, data:collegedata})
+//     let collegedata = await collegemodel.create(data)
+//     return res.status(201).send ({status:true, data:collegedata})
 
-} catch (error) {
-    return res.status(500).send({status: false , msg : error.message})  
-}}
+// } catch (error) {
+//     return res.status(500).send({status: false , msg : error.message})  
+// }}
+
+
+const createcollege = async function (req,res){
+    try {
+        let data = req.body
+        let {name, fullName,logoLink}=data
+
+        if(!name)return res.status(400).send({status:false,msg:"enter a  name"})
+        if(!fullName)return res.status(400).send({status:false,msg:"enter a  fullname"})
+        if(!logoLink)return res.status(400).send({status:false,msg:"enter a  logolink"})
+
+        let Duplicatecollegename= await collegemodel.findOne({name:name})
+        if (Duplicatecollegename)return res.status(400).send({status:false,msg:"enter a correct college name"})
+
+        let checkname=validName(name)
+        let checkfullname=validfullname(fullName)
+        let checkvalidlink=validlogolink(logoLink)
+
+        if(!checkname) return res.status(400).send({status:false, msg:"enter a valid name"})
+        if(!checkfullname)return res.status(400).send({status:false,msg:"enter a valid fullname"})
+        if(!checkvalidlink)return res.status(400).send({status:false,msg:"enter a valid logolink"})
+
+        let collegedata=await collegemodel.create(data)
+        return res.status(201).send ({status:true,data:collegedata})
+    } catch (error) {
+        return res.status(500).send({status:false,msg:error.message})
+        
+    }
+}
 
 
 //--------------------Returns the list of all interns who have applied for internship at this college.-------------------------------------------
