@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 
 
+
 const URLSchema= new mongoose.Schema({
 
 
@@ -17,17 +18,17 @@ const URLSchema= new mongoose.Schema({
      },
      longUrl:{
         type:String,
-        require:true,
-        unique:true,
-        lowercase:true,
+         require:true,
+      
+        // lowercase:true,
         trim:true
 
      },
      shortUrl:{
         type:String,
-        require:true,
-        unique:true,
-        lowercase:true,
+         require:true,
+         unique:true,
+        // lowercase:true,
         trim:true
 
      }
