@@ -3,24 +3,19 @@ const mongoose = require('mongoose');
 const cryptoSchema = new mongoose.Schema({
 
     symbol: {
-        type: String,
-        unique: true,
+        type: String
     },
     name: {
-        type: String,
-        unique: true
+        type: String
     },
     phone: {
-        type: String,
-        unique: true
+        type: String
     },
     marketCapUsd: {
-        type: String,
-        unique: true
+        type: String
     },
     priceUsd: {
-        type: String,
-        unique: true
+        type: String
     },
 
 },
