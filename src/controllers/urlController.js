@@ -1,6 +1,7 @@
 const URLModel= require("../models/urlModel")
 const shortUrl = require("node-url-shortener");
 const shortid = require('shortid');
+const validUrl = require('valid-url');
 
 const Validations= require("../validations/validation");
 
@@ -19,11 +20,21 @@ const createURL = async function (req, res) {
           .send({ status: false, message: "No input provided" });
       }
       const { longUrl} = data
+      if(!longUrl){
+        return res.status(400).send({status:false, message:"longUrl must be present"})
+   }
 
-      if(!(Validations.isValidURL(longUrl))){
-        res.status(400).send({status:false,message:"wrongurl"})
-      }
+   if(!(Validations.isValidString(longUrl))){
+     return res.status(400).send({status:false,message:"provide a valid String"})
+   }
 
+   if (!(validUrl.isUri(longUrl))){
+   return  res.status(400).send({status:false, message:" url is wrong"})
+
+}
+
+
+   
 
       let urlDataNew= await URLModel.findOne({longUrl:longUrl}).select({_id:0,
         updatedAt:0,createdAt:0,
@@ -49,7 +60,7 @@ data["shortUrl"] = `http://localhost:3000/${urlCode}`
 data["urlCode"] = `${urlCode}`
 
 if(!(Validations.isValidURL(data.shortUrl))){
-    res.status(400).send({status:false,message:"wrongurl"})
+   return res.status(400).send({status:false,message:"wrongurl"})
   }
 
 
@@ -76,7 +87,15 @@ const getURL= async function(req,res){
   try{
 
     let urlCode = req.params.urlCode
-    console.log(urlCode)
+    
+
+
+    if(!Validations.isValidString(urlCode)){
+      return res.status(400).send({status:false,message:"provide a valid String"})
+    }
+ 
+
+    
 
     if(!(Validations.isValidURLCode(urlCode))){
       return res.status(400).send({status:false, message:"urlcode is not valid"})

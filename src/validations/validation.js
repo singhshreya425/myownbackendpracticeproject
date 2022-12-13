@@ -14,6 +14,16 @@ const isValidURL = function(url){
    }
 
 
+   //____________________________________Validation:string__________________________________
+   const isValidString= function(value){
+     if(typeof value === "undefined"  ||  value=== null) return false
+     if(typeof value !== "string") return false
+     if(value.trim().length == 0) return false
+     return true;
+     
+   }
+
+
 
    //________________________________Validation:ValidUrlCode__________________________________
 
@@ -45,4 +55,4 @@ const isValidURL = function(url){
 
 
 
-module.exports= {isValidURL,isValidURLCode }
+module.exports= {isValidURL,isValidURLCode,isValidString }
