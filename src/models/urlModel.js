@@ -45,4 +45,4 @@ const URLSchema= new mongoose.Schema({
 
 },{timestamps:true});
 
-module.exports= mongoose.model("url",URLSchema)
+module.exports= mongoose.model("URL",URLSchema)
