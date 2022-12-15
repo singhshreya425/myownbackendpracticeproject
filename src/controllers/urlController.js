@@ -27,7 +27,7 @@ redisClient.on("connect", async function () {
 
 
 
-const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
+const SET_ASYNC = promisify(redisClient.SETEX).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 
 
@@ -56,6 +56,20 @@ const createURL = async function (req, res) {
     }
 
 
+
+    let cahcedProfileData = await GET_ASYNC(`${longUrl}`)
+  
+
+    let data1 = JSON.parse(cahcedProfileData)
+
+    if (data1 != null) {
+      return res.status(200).send({ status: true, message: "url is already shorted, data is coming from cache memory", data: data1 })
+    }
+
+
+
+
+
     let urlfound = false;
     let url = { method: 'get', url: longUrl };
 
@@ -77,14 +91,14 @@ const createURL = async function (req, res) {
     // }
 
 
-    let cahcedProfileData = await GET_ASYNC(`${longUrl}`)
+    // let cahcedProfileData = await GET_ASYNC(`${longUrl}`)
   
 
-    let data1 = JSON.parse(cahcedProfileData)
+    // let data1 = JSON.parse(cahcedProfileData)
 
-    if (data1 != null) {
-      return res.status(200).send({ status: true, message: "url is already shorted", data: data1 })
-    } else {
+    // if (data1 != null) {
+    //   return res.status(200).send({ status: true, message: "url is already shorted", data: data1 })
+    // } else {
 
 
       let urlCode = shortid.generate(longUrl);
@@ -99,14 +113,20 @@ const createURL = async function (req, res) {
 
 
 
-      const createURL = await URLModel.create(data);
+      // const createURL = await URLModel.create(data);
 
       let profile = await URLModel.findOne({ longUrl: longUrl });
-      await SET_ASYNC(`${longUrl}`, JSON.stringify(profile))
+      if(profile!= null){
+      await SET_ASYNC(`${longUrl}`,50, JSON.stringify(profile))
+      return res.status(200).send({ status: true, data: profile ,message:"URL is shorted already, data is coming from database"});
+
+      }
+
+      const createURL = await URLModel.create(data);
 
 
-      return res.status(201).send({ status: true, data: profile });
-    }
+      return res.status(201).send({ status: true, data: createURL});
+    // }
 
   }
 
@@ -157,7 +177,7 @@ const getURL = async function (req, res) {
         return res.status(404).send({ status: false, message: "urlcode is not registered" })
       }
       let longUrl = profile.longUrl
-      await SET_ASYNC(`${urlCode}`, JSON.stringify(profile))
+      await SET_ASYNC(`${urlCode}`,50, JSON.stringify(profile))
 
       return res.status(302).redirect(longUrl)
 
