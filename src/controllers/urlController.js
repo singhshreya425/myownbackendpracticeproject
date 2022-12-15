@@ -115,17 +115,27 @@ const createURL = async function (req, res) {
 
       // const createURL = await URLModel.create(data);
 
-      let profile = await URLModel.findOne({ longUrl: longUrl });
+      // let t1= {longUrl:1,
+      //   shortUrl: 1,
+      //   urlCode:1,_id:0}
+
+      let profile = await URLModel.findOne({ longUrl: longUrl }).select({longUrl:1,
+        shortUrl: 1,
+        urlCode:1,_id:0})
       if(profile!= null){
       await SET_ASYNC(`${longUrl}`,50, JSON.stringify(profile))
       return res.status(200).send({ status: true, data: profile ,message:"URL is shorted already, data is coming from database"});
 
       }
+     
 
-      const createURL = await URLModel.create(data);
+      const createURL = await URLModel.create(data)
+      let profile1 = await URLModel.findOne({ longUrl: longUrl }).select({longUrl:1,
+        shortUrl: 1,
+        urlCode:1,_id:0})
 
 
-      return res.status(201).send({ status: true, data: createURL});
+      return res.status(201).send({ status: true, data:profile1});
     // }
 
   }
