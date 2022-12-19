@@ -3,30 +3,43 @@ const jwt = require('jsonwebtoken')
 const { validName, isValid ,validEmail,isValidPassword,validPhone,validImage,isValidPincode} = require("../validation/validation")
 const {uploadFile} =require('../aws/aws.js')
 const bcrypt =require("bcrypt")
+//===================================Create USer===========================================================//
 const createUser = async function (req, res) {
     try {
         let data = req.body
         let files = req.files
+        //--------------------------Destructuring user data------------------------------------//
         let { fname, lname, email, profileImage, phone, password, address } = data
-
+       //---------------------------Body can't be empty-------------------------------------//
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "data can't be empty" })
+        //---------------------------------validation for each key----------------------//
         let newarr = ["fname","lname","email","phone","password","address"]
        
         for(field of newarr) { if (!data[field]) return res.status(400).send({ status: false, msg: `${field} is empty input valid data` }) }
         if(!address || address =='') return res.status(400).send({status:false,message:"address is required"})
+        //----------------------convert from JSON string to JSon onject of address-----------------//
         data.address = JSON.parse(address)
+        //------------------------------validation of object---------------------------------------------//
         if(!isValid(data.address)) {return res.status(400).send({status:false,message:"Address should be in object"})} 
         if(!isValid(data)){return res.status(400).send({status:false,message:"data is in wrong format"})}
         if(!validName(fname)) {return res.status(400).send({status:false,message:"fname should be in alphabet"})}
         if(!validName(lname)) {return res.status(400).send({status:false,message:"lname should be in alphabet"})}
         if(!validEmail(email)){return res.status(400).send({status:false,message:"email is in wrong format"})}
         if(!isValidPassword(password)){return res.status(400).send({status:false,message:"password is in wrong format"})}
+       //----------------------------------Encrept the password by bcrypt-------------------------------//
         bcrypt.hash(password,10,function(error,result){
             if(error) return res.status(400).send({status:false,message:error.message})
            else{ data.password =result }
         })
+        //---------Fetching data of email from db checking duplicate email or phone is present or not------------//
+        const isDuplicateEmail = await userModel.findOne({$or:[{email:email},{phone:phone}]})
+        if(isDuplicateEmail){
+            if(isDuplicateEmail.email == email){return res.status(400).send({status:false,message:`this emailId:${email} is already exist`})}
+            if(isDuplicateEmail.phone == phone){return res.status(400).send({status:false,message:`this emailId:${phone} is already exist`})}
+        }
         if(!validPhone(phone)) {return res.status(400).send({status:false,mesaage:"phone number is in wrong format"})}
         if(!validImage(profileImage)) {return res.status(400).send({status:false,message:"profileImage should be in wrong format"})}
+        //-------------------------------create s3 link--------------------------------------------------------//
         if(files){
             const url = await uploadFile(files[0]) //fileupload on aws
               data.profileImage=url //bucketlink stored on profileimage 
@@ -55,10 +68,7 @@ const loginUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "EmailId should be Valid", });
         }
         if (!password) {
-            return res.status(400).send({
-                status: false,
-                message: "Password is mandatory",
-            });
+            return res.status(400).send({ status: false,message: "Password is mandatory" });
         }
         if (password.length < 8 || password.length > 15) {
             return res.status(400).send({ status: false, message: "the length of password must be min:- 8 or max: 15", });
@@ -70,9 +80,15 @@ const loginUser = async function (req, res) {
         let verifyUser = await userModel.findOne({ email: email, password: password, });
         if (!verifyUser) return res.status(400).send({ status: false, message: "Invalid Login Credential" });
 
+        //-------------------------------------------Decrypt the password and compare the password with user input------------------------------------------//
+        bcrypt.compare(password, verifyUser.password, function(error, verifyUser) {
+            if(error) return res.status(400).send({status:false,message:error.message})
+           else verifyUser == true
+        });
+
         let payload = { userId: findUser._id, iat: Date.now(), };
 
-        let token = jwt.sign(payload, "Group18", { expiresIn: "30s" });
+        let token = jwt.sign(payload, "Group18", { expiresIn: "24h" });
 
         res.setHeader("x-api-key", token);
         res.status(200).send({ status: true, message: "User login successfull", data: { userId: id, token } });

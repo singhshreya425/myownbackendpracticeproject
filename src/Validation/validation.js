@@ -11,7 +11,7 @@ const validName=function(name){
     return nameRegex.test(name)
 }
 const validEmail=function(email){
-    const emailRegex=/^[_a-z0-9-]+(\.[_a-z0-9-]+)@[a-z0-9-]+(\.[a-z0-9-]+)(\.[a-z]{2,3})$/
+    const emailRegex=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     return emailRegex.test(email)
 }
 const isValidPassword=function(password){
@@ -24,7 +24,7 @@ const validPhone=function(phone){
     return phoneRegex.test(phone)
 }
 const validImage =function(value){
-    const imageRegex= /\.(gif|jpe?g|tiff?|png|webp|bmp)$/ 
+    const imageRegex= /^\.(gif|jpe?g|tiff?|png|webp|bmp)$/ 
     return imageRegex.test(value)
 }
 const isValidPincode=function(pincode){
