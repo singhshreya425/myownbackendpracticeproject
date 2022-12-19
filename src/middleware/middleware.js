@@ -29,5 +29,4 @@ const authorize = function (req, res, next) {
 }
 
 
-module.exports.authenticate = authenticate;
-module.exports.authorize = authorize
+module.exports = {authenticate,authorize}
