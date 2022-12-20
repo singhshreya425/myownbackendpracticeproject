@@ -1,5 +1,5 @@
 const productModel = require("../model/productModel.js")
-const { validImage ,isValidStreet,isValidPrice, isValidAvailableSizes,validName} = require("../validation/validation")
+const { validImage ,isValidStreet,isValidPrice, isValidAvailableSizes,validName,isValidObjectIds} = require("../validation/validation")
 const { uploadFile } = require('../aws/aws.js')
 const createProduct = async function (req, res) {
     try {
@@ -33,7 +33,7 @@ const createProduct = async function (req, res) {
      if (files) {const url = await uploadFile(files[0]) //fileupload on aws
                 data.productImage = url //bucketlink stored on profileimage 
                 } else {
-                    return res.status(400).send({ status: true, message: "profile is mandatory" })
+                    return res.status(400).send({ status: true, message: "product image is mandatory" })
                 }
        
         if (!style)return res.status(400).send({ status: false, message: "style is missing" })
@@ -59,7 +59,7 @@ const createProduct = async function (req, res) {
 
 
         let checktitle = await productModel.findOne({ title: title })
-        if (checktitle != null)return res.status(409). send({ status: false, message: "this title is already present" })
+        if (checktitle != null)return res.status(400). send({ status: false, message: "this title is already present" })
         let result = await productModel.create(data)
         res.status(201).send({ status: true, message: "Success", data: result })
     } catch (error) { res.status(500).send({ status: false, message: error.message })
@@ -126,7 +126,7 @@ const productsById = async function (req, res) {
 
         let product = req.params.productId
 
-        if (!isValidObjectId(product)) {
+        if (!isValidObjectIds(product)) {
             return res.status(400).send({ status: false, message: "This productId is not valid" })
         }
 

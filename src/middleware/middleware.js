@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken');
+const { isValidObjectIds } = require("../validation/validation");
+const userModel = require("../model/userModel.js")
+
 
 const authenticate = (req, res, next) => {
   try {
@@ -19,17 +22,24 @@ const authenticate = (req, res, next) => {
     res.status(500).send({ staus: false, msg: error });
   }
 }
-
-const authorize = function (req, res, next) {
+const authorize = async function (req, res, next) {
   try {
+    let userLoggedIn = req.tokenData; //Accessing userId from token attribute
+    let userId = req.params.userId; // pass user id in path params
+    //check if user id is valid or not
+    if (!isValidObjectIds(userId)) {
+      return res.status(400).send({status: false,message: "userId is invalid"});
+    }
+    let userAccessing = await userModel.findById(userId);
+    if (!userAccessing) {return res.status(404).send({status: false,message: "Error! Please check userid and try again" }); }
 
-    if (req.body.userId == req.decode.userId) return next();
-    else return res.status(403).send({ status: false, msg: "you are not authorised !" });
-
-  } catch (error) {
-    return res.status(500).send({ msg: error.message })
+    if (userId !== userLoggedIn.userId) {
+      return res.status(403).send({status: false,msg: "Error, authorization failed"});
+    }
+    next();
+  } catch (err) {
+    res.status(500).send({status: false, error: err.message});
   }
-}
-
+};
 
 module.exports = {authenticate,authorize}

@@ -65,6 +65,7 @@ function isValidPrice(value){
     return /^[1-9]{1}\d*((\.)\d+)?$/.test(value)
 }
 
+
 const isValidAvailableSizes = (availablesizes) => {
     for( i=0 ;i<availablesizes.length; i++){
       if(!["S", "XS","M","X", "L","XXL", "XL"].includes(availablesizes[i])) return false
