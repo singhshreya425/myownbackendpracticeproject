@@ -6,7 +6,7 @@ const{authenticate,authorize} =require("../middleware/middleware")
 
 router.post("/register",createUser)
 router.post("/login",loginUser)
-router.get("/user/:userId/profile",authenticate,authorize,getUser)
+router.get("/user/:userId/profile",authenticate ,getUser)
 router.put("/user/:userId/profile",authenticate,authorize,updateUser)
 
 

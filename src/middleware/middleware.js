@@ -2,12 +2,15 @@ const jwt = require('jsonwebtoken');
 
 const authenticate = (req, res, next) => {
   try {
-    let token = req.headers["x-api-key"];
+    let token = req.headers["authorization"];
+    
 
     if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
+    token= token.slice(7)
+    
 
-    jwt.verify(token, "Secret-Key-lithium", function (err, decode) {
-      if (err) { return res.status(401).send({ status: false, data: "Authentication failed" }) }
+    jwt.verify(token, "Group18", function (err, decode) {
+      if (err) { return res.status(401).send({ status: false, message: "Authentication failed" }) }
       req.decode = decode;
       next();
     })

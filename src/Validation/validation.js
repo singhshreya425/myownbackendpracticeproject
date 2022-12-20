@@ -1,4 +1,5 @@
 const mongoose =require("mongoose")
+const {isValidObjectId} = require("mongoose")
 
 const isValid=function(value){
     if( typeof value=='undefined' || value==null) return false
@@ -49,4 +50,10 @@ const isValidPincode=function(pincode){
     return pincoderegex.test(pincode)
 }
 
-module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode}
+//--------------------------------------------------validation for objectID---------------------------------------------------------------------------//
+const  isValidObjectIds =function(id){
+    const check = isValidObjectId(id);
+    return check
+}
+
+module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds}

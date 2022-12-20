@@ -1,6 +1,6 @@
 const userModel = require("../model/userModel.js")
 const jwt = require('jsonwebtoken')
-const { validName, isValid, validEmail, isValidPassword, validPhone, validImage, isValidPincode } = require("../validation/validation")
+const { validName, isValid, validEmail, isValidPassword, validPhone, validImage, isValidPincode,isValidObjectIds } = require("../validation/validation")
 const { uploadFile } = require('../aws/aws.js')
 const bcrypt = require("bcrypt")
 
@@ -21,6 +21,23 @@ const createUser = async function (req, res) {
         if (!address || address == '') return res.status(400).send({ status: false, message: "address is required" })
         //----------------------convert from JSON string to JSon onject of address-----------------//
         data.address = JSON.parse(address)
+        
+        //--------------------------------Destructuring address from object data----------------------------//
+        let {shipping,billing}=data.address
+        if(!shipping) return res.status(400).send({status:false,message:"Enter shipping address"})
+        if(!isValid(shipping.street)) return res.status(400).send({status:false,message:"please enter valid shipping street "})
+       // if(!isValid(shipping.city)) return res.status(400).send({status:false,message:"please enter shipping city"})
+      //  if(!validName(city)) return res.status(400).send({status:false,message:"city should be alphabet"})
+
+        //---------------------------------validation for billing--------------------------------------//
+        if(!billing) return res.status(400).send({status:false,message:"Enter billing address"})
+        if(!isValid(billing.street)) return res.status(400).send({status:false,messsge:"please enter billing street"})
+        //if(!isValid(billing.city)) return res.status(400).send({status:false,message:"please enter billing city"})
+        //if(!validName(city)) return res.status(400).send({status:false,message:"city should be in capital"})
+        //if(!isValid(billing.pincode)) return res.status(400).send({status:false,message:"please enter billing pin"})
+        //if(!isValidPincode(pincode)) return res.status(400).send({status:false,message:"invalid billing pin code"})
+
+
         //------------------------------validation of object---------------------------------------------//
         if (!isValid(data.address)) { return res.status(400).send({ status: false, message: "Address should be in object" }) }
         if (!isValid(data)) { return res.status(400).send({ status: false, message: "data is in wrong format" }) }
@@ -28,7 +45,7 @@ const createUser = async function (req, res) {
         if (!validName(lname)) { return res.status(400).send({ status: false, message: "lname should be in alphabet" }) }
         if (!validEmail(email)) { return res.status(400).send({ status: false, message: "email is in wrong format" }) }
         if (!isValidPassword(password)) { return res.status(400).send({ status: false, message: "password is in wrong format" }) }
-        //----------------------------------Encrept the password by bcrypt-------------------------------//
+        //----------------------------------Encrypt the password by bcrypt-------------------------------//
         bcrypt.hash(password, 10, function (error, result) {
             if (error) return res.status(400).send({ status: false, message: error.message })
             else { data.password = result }
@@ -40,7 +57,7 @@ const createUser = async function (req, res) {
             if (isDuplicateEmail.phone == phone) { return res.status(400).send({ status: false, message: `this emailId:${phone} is already exist` }) }
         }
         if (!validPhone(phone)) { return res.status(400).send({ status: false, mesaage: "phone number is in wrong format" }) }
-        if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
+     //   if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
         //-------------------------------create s3 link--------------------------------------------------------//
         if (files) {
             const url = await uploadFile(files[0]) //fileupload on aws
@@ -94,7 +111,7 @@ const loginUser = async function (req, res) {
 
         let token = jwt.sign(payload, "Group18", { expiresIn: "24h" });
 
-        res.setHeader("x-api-key", token);
+        res.setHeader("authorization", token);
         res.status(200).send({ status: true, message: "User login successfull", data: { userId:verifyUser["_id"], token } });
     } catch (error) {
         res.status(500).send({ status: false, message: error.message, });
@@ -108,8 +125,9 @@ const getUser = async (req, res) => {
         const paramId = req.params.userId
 
         if (!paramId) { return res.status(400).send({ status: false, message: "User id is required in params" }) }
+        if (!isValidObjectIds(paramId)) return res.status(400).send({ status: false, messsge: "Invalid user Id" })
 
-        const getData = await userModel.findById({ userId: userId });
+        const getData = await userModel.findById({ _id: paramId});
 
         if (!getData) { return res.status(404).send({ status: false, message: "User id is not present in DB" }) }
 
@@ -248,7 +266,7 @@ const updateUser = async function (req, res) {
           return res.status(200).send({status: true,message: "user profile successfully updated",data: updateUser,});
 
  } catch (error) {
-
+       return res.status(500).send({status:false,message:error.message})
     }
 }
 module.exports = { createUser, loginUser, getUser, updateUser }
