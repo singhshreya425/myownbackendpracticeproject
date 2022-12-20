@@ -55,5 +55,14 @@ const  isValidObjectIds =function(id){
     const check = isValidObjectId(id);
     return check
 }
+//---------------------------------------------------validation for street------------------------------------------------------//
+const isValidStreet=function(value){
+    value=value.trim()
+    return /^\w+([\s]?\w+[.,$,#,@]?)*$/.test(value)
+}
+//-----------------------------------------------------validation for price--------------------------------------------------------//
+function isValidPrice(value){
+    return /^[1-9]{1}\d*((\.)\d+)?$/.test(value)
+}
 
-module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds}
+module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice}

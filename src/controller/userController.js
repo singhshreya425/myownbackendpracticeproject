@@ -149,9 +149,9 @@ const updateUser = async function (req, res) {
         const update = {};
         //-------------------------Destructuring user body data------------------------------------------------//
         const { fname, lname, email, password, phone, address } = data;
-       if(object.keys(data).length==0)return res.status(400).send({status:})
-        if (!isValidBody(data) && !files) {
-            return res.status(400).send({ status: false, mesaage: "please provide data in  request body" });
+       if(object.keys(data).length==0)return res.status(400).send({status:false,message:"data can't be empty"})
+        if (!isValid(data) && !files) {
+            return res.status(400).send({ status: false, mesaage: "invalid format" });
         }
         if (fname) {
             if (!isValid(fname) || !validName(fname)) {
