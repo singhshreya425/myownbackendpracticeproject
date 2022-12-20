@@ -121,5 +121,31 @@ const filterProduct=async function (req, res){
         return res.status(500).send({ error : error.message })
     }
 }
+const productsById = async function (req, res) {
+    try {
 
-module.exports={createProduct,filterProduct}
+        let product = req.params.productId
+
+        if (!isValidObjectId(product)) {
+            return res.status(400).send({ status: false, message: "This productId is not valid" })
+        }
+
+        const productCheck = await productModel.findById({ _id: product })
+        if (!productCheck) {
+            return res.status(404).send({ status: false, message: "This product is not found" })
+        }
+
+        if (productCheck.isDeleted == true) {
+            return res.status(404).send({ status: false, message: "This product has been deleted" })
+        }
+
+        let getProducts = await productModel.findOne({ _id: product, isDeleted: false }).select({ deletedAt: 0 })
+        return res.status(200).send({ status: true, message: "Success", data: getProducts })
+
+
+    } catch (error) {
+        res.status(500).send({ status: "false", message: error.message })
+    }
+}
+
+module.exports={createProduct,filterProduct,productsById}
