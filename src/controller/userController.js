@@ -147,9 +147,9 @@ const updateUser = async function (req, res) {
         const files = req.files;
         const userId = req.params.userId;
         const update = {};
-
+        //-------------------------Destructuring user body data------------------------------------------------//
         const { fname, lname, email, password, phone, address } = data;
-
+       if(object.keys(data).length==0)return res.status(400).send({status:})
         if (!isValidBody(data) && !files) {
             return res.status(400).send({ status: false, mesaage: "please provide data in  request body" });
         }
