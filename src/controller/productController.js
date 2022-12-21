@@ -148,4 +148,83 @@ const productsById = async function (req, res) {
     }
 }
 
-module.exports={createProduct,filterProduct,productsById}
+const updateProducts =async function(req,res){
+    try{
+        let productId =req.params.productId
+        if(!isValidObjectIds(productId)){ return res.status(400).send({status:false,message:"this productId is not valid"})}
+        const existingProduct =await productModel.findById({_id:productId})
+        if(!existingProduct) {return res.status(404).send({status:false,message:"this product is not found"})}
+        if(existingProduct.isDeleted==true){
+            return res.status(404).send({status:false,message:"This product is not found"})
+        }
+        let data =req.body
+        let files =req.files
+        if(object.keys(data).length==0) return res.status(400).send({status:false,message:"Please enter the data to update"})
+        if(data.title){
+            if(!isValid(data.title)){ return res.status(400).send({status:false,message:"title is not valid"})}
+        }
+        const titleCheck =await productModel.findOne({title:data.title})
+        if(titleCheck) {return res.status(400).send({status:false,message:"this title is already existng"})}
+        if(data.price){
+            if(!isValidPrice(data.price)){
+                return res.status(400).send({status:false,message:"Price is not in correct format"})
+            }
+        }
+        //--------------------------------------upload file-------------------------------------------------------//
+                //-------------------------------create s3 link--------------------------------------------------------//
+                if (files) {
+                    const url = await uploadFile(files[0]) //fileupload on aws
+                    data.productImage = url //bucketlink stored on profileimage 
+                } else {
+                    return res.status(400).send({ status: true, message: "ProductImage is mandatory" })
+                }
+        if(data.isFreeShipping){
+            if(!(data.isFreeShipping=="true"|| data.isFreeShipping=="false")){
+                return res.status(400).send({status:false,message:"Please enter a boolean value for isFreeShipping"})
+            }
+            if(data.style){
+                if(!isValid(data.style)){
+                    return res.status(400).send({status:false,message:"style is not correct format"})
+                }
+                
+            }
+            if (!isValidStreet(style))return res.status(400).send({ status: false, message: "style is invalid" })
+
+            if (!availableSizes) return res. status(400). send({ status: false, message: "availableSizes is missing" })
+            if (!isValidStreet(availableSizes))
+                availableSizes = JSON.parse(availableSizes)
+            //if (!isValidAddress((availableSizes)))return res.status(400). send({ status: false, message: "availabelSizes contains Array of String value" })
+    
+            let arr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+            for (let i = 0; i < availableSizes.length; i++) {
+                if (availableSizes[i] == ",")
+                    continue
+                else {
+                    if (!arr.includes(availableSizes[i]))
+                        return res.
+                            status(400).
+                            send({ status: false, message: `availableSizes can contain only these value [${arr}]` })
+                }
+            }
+    
+            const updateProduct =await productModel.findByIdAndUpdate({_id:productId},data,{new:true})
+            return res.status(200).send({status:true,message:"Product updated successfully",data:updateProduct})
+        }
+        
+    }
+    catch(error){
+        return res.status(500).send({status:false,message:error.message})
+    }
+}
+const deleteProductById = async function(req, res) {
+    try {
+     let productId = req.params.productId
+     if (!productId) { return res. status(400).send({ status: false, message: "please give productId in requesst params" })}
+     if (!mongoose.Types.ObjectId.isValid(productId)) {return res. status(400). send({ status: false, message: "please enter productId in valid format" })   }
+        let findData = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() })
+        if (!findData) { return res.status(200).send({ status: true, message: `product not found by this [${productId}] productId` })}
+        return res.status(200).send({ status: false, message: "data deleted successfully" ,data:findData})
+
+    } catch (error) { res.status(500).send({ status: false, message: error.message })}
+}
+module.exports={createProduct,filterProduct,productsById,updateProducts,deleteProductById}
