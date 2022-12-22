@@ -164,8 +164,6 @@ const updateProducts = async function (req, res) {
         let data = req.body
         let files = req.files
 
-        console.log(data)
-        console.log(files)
         if (!isValidObjectIds(productId)) { return res.status(400).send({ status: false, message: "this productId is not valid" }) }
         const existingProduct = await productModel.findById({ _id: productId })
         if (!existingProduct) { return res.status(404).send({ status: false, message: "this product is not found" }) }
