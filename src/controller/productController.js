@@ -233,7 +233,7 @@ const deleteProductById = async function (req, res) {
     try {
         let productId = req.params.productId
         if (!productId) { return res.status(400).send({ status: false, message: "please give productId in requesst params" }) }
-        if (!mongoose.Types.ObjectId.isValid(productId)) { return res.status(400).send({ status: false, message: "please enter productId in valid format" }) }
+        if (!isValidObjectIds(productId)) { return res.status(400).send({ status: false, message: "please enter productId in valid format" }) }
         let findData = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() })
         if (!findData) { return res.status(200).send({ status: true, message: `product not found by this [${productId}] productId` }) }
         return res.status(200).send({ status: false, message: "data deleted successfully", data: findData })
