@@ -201,6 +201,32 @@ const updateCart =async function(req,res){
         return res.status(500).send({status:false,message:error.message})
     }
 }
+const getCart = async function (req, res) {
+    try {
+        let userId = req.params.userId;
+        //if userId is given then is it valid or not
+        if (userId) {
+            if (!isValidObjectIds(userId))
+                return res.status(400).send({ status: false, msg: "wrong userId" });
+        }
+        // finding user in DB 
+        let checkUserId = await userModel.findOne({ _id: userId });
+        if (!checkUserId) {
+            return res.status(404).send({ status: false, message: "no user details found" });
+        }
+        // finding in cart 
+        let getData = await cartModel.findOne({ userId });
+        if (getData.items.length == 0)
+            return res.status(400).send({ status: false, message: "items details not found" });
+        //If not get
+        if (!getData) {
+            return res.status(404).send({ status: false, message: "cart not found" });
+        }
+        res.status(200).send({ status: true, message: "cart successfully", data: getData });
+    } catch (err) {
+        return res.status(500).send({ status: false, msg: err.message })
+    }
+}
 const deleteCart = async function (req, res) {
     try {
         let user_id = req.params.userId
@@ -214,4 +240,4 @@ const deleteCart = async function (req, res) {
     }
 }
 
-module.exports={updateCart,deleteCart,createCart}
+module.exports={updateCart,deleteCart,createCart,getCart}
