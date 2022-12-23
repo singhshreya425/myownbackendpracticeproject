@@ -73,6 +73,10 @@ const isValidAvailableSizes = (availablesizes) => {
     return true
   };
 
+  const isValidNum =function(value){
+    return /[0-9]/
+
+  }
   
   
-module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice, isValidAvailableSizes,validName}
+module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice, isValidAvailableSizes,validName,isValidNum}

@@ -67,7 +67,7 @@ const createUser = async function (req, res) {
         const isDuplicateEmail = await userModel.findOne({ $or: [{ email: email }, { phone: phone }] })
         if (isDuplicateEmail) {
             if (isDuplicateEmail.email == email) { return res.status(400).send({ status: false, message: `this emailId:${email} is already exist` }) }
-            if (isDuplicateEmail.phone == phone) { return res.status(400).send({ status: false, message: `this emailId:${phone} is already exist` }) }
+            if (isDuplicateEmail.phone == phone) { return res.status(400).send({ status: false, message: `this phone:${phone} is already exist` }) }
         }
         if (!validPhone(phone)) { return res.status(400).send({ status: false, mesaage: "phone number is in wrong format" }) }
         //   if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
