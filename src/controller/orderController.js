@@ -1,5 +1,5 @@
 const orderModel =require("../model/orderModel")
-const cartModel =require("..model/cartModel")
+const cartModel =require("../model/cartModel")
 const { isValidObjectIds,isValid} = require("../validation/validation")
 const createOrder = async function(req,res){
     try{
@@ -8,10 +8,9 @@ const createOrder = async function(req,res){
          let{cartId,cancellable} =data
          //------------------------------create a empty object-------------------------------------------------//
          let obj={}
-         if(object.keys(data).length==0) return res.status(400).send({status:false,message:"body can't be empty"})
-         if(isValidObjectIds(cartId)) return res.status(400).send({status:false,message:"cart id is not valid"})
-         let cartExist =await cartModel.find(cartId)
-         if(!cartExist) return res.status(404).send({status:false,message:"cartId not found"})
+         if(Object.keys(data).length==0) return res.status(400).send({status:false,message:"body can't be empty"})
+         if(!isValid(cartId)) return res.status(400).send({status:false,message:"please enter a cartID"})       
+         if(!isValidObjectIds(cartId)) return res.status(400).send({status:false,message:"cart id is not valid"})
          //------------------------------condition for checking cancellable is true or false-----------------------//
          if(cancellable || cancellable ==''){
             if(!isValid) return res.status(400).send({status:false,message:"Please a enter valid cancellable"})
