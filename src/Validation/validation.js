@@ -1,27 +1,26 @@
 const mongoose =require("mongoose")
 const {isValidObjectId} = require("mongoose")
 
+//---------------------------validation for value and body----------------------//
 const isValid=function(value){
     if( typeof value=='undefined' || value==null) return false
     if( typeof value=='string' && value.trim().length===0) return false
     return true
 }
 
-//----------------------------------------------Validation for name-----------------------------------------------------------------------------
-
+//--------------------Validation for name-------------------------------------//
 const validName=function(name){
     const nameRegex=/^[A-Z a-z]+$/
     return nameRegex.test(name)
 }
 
-//----------------------------------------------Validation for email-----------------------------------------------------------------------------
-
+//----------------------Validation for email---------------------------------------//
 const validEmail=function(email){
     const emailRegex=/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     return emailRegex.test(email)
 }
 
-//----------------------------------------------Validation for password-----------------------------------------------------------------------------
+//---------------------------------Validation for password----------------------//
 
 const isValidPassword=function(password){
      password = password.trim()
@@ -29,42 +28,43 @@ const isValidPassword=function(password){
     return passRegex.test(password)
 }
 
-//----------------------------------------------Validation for phone-----------------------------------------------------------------------------
+//---------------Validation for phone--------------------------------------------------//
 
 const validPhone=function(phone){
     const phoneRegex=/^[789]\d{9}$/
     return phoneRegex.test(phone)
 }
 
-//----------------------------------------------Validation for Image-----------------------------------------------------------------------------
+//----------------------Validation for Image---------------------------------------------//
 
 const validImage =function(value){
     const imageRegex= /^\.(gif|jpe?g|tiff?|png|webp|bmp)$/ 
     return imageRegex.test(value)
 }
 
-//----------------------------------------------Validation for pincode-----------------------------------------------------------------------------
+//-------------------------Validation for pincode-----------------------------------------//
 
 const isValidPincode=function(pincode){
     const pincoderegex= /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/
     return pincoderegex.test(pincode)
 }
 
-//--------------------------------------------------validation for objectID---------------------------------------------------------------------------//
+//---------------------------validation for objectID----------------------------------//
 const  isValidObjectIds =function(id){
     const check = isValidObjectId(id);
     return check
 }
-//---------------------------------------------------validation for street------------------------------------------------------//
+//----------------------------validation for street-----------------------------------------------//
 const isValidStreet=function(value){
     value=value.trim()
     return /^\w+([\s]?\w+[.,$,#,@]?)*$/.test(value)
 }
-//-----------------------------------------------------validation for price--------------------------------------------------------//
+//--------------------------------validation for price----------------------------------------------//
 function isValidPrice(value){
     return /^[1-9]{1}\d*((\.)\d+)?$/.test(value)
 }
 
+//--------------------------------------validation for sizes------------------------------------------//
 
 const isValidAvailableSizes = function (availablesizes)  {
     for( i=0 ;i<availablesizes.length; i++){
@@ -73,10 +73,16 @@ const isValidAvailableSizes = function (availablesizes)  {
     return true
   };
 
+//-------------------------------------------validatin for numbers---------------------------------------//
   const isValidNum =function(value){
     return /[0-9]/
 
   }
-  
-  
-module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice, isValidAvailableSizes,validName,isValidNum}
+//--------------------------------------validation for status------------------------------------------//
+const isValidStatus =function(value){
+return  ["pending", "completed", "cancelled"].indexOf(value)!==-1
+
+}  
+
+//-------------------------------------------module export---------------------------------------------//  
+module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice, isValidAvailableSizes,validName,isValidNum,isValidStatus}
