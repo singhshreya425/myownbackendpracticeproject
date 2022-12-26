@@ -9,7 +9,9 @@ const bcrypt = require("bcrypt")
 const createUser = async function (req, res) {
     try {
         let data = req.body
+     
         let files = req.files
+     
         //--------------------------Destructuring user data------------------------------------//
         let { fname, lname, email, profileImage, phone, password, address } = data
         //---------------------------Body can't be empty-------------------------------------//
@@ -72,9 +74,13 @@ const createUser = async function (req, res) {
         if (!validPhone(phone)) { return res.status(400).send({ status: false, mesaage: "phone number is in wrong format" }) }
         //   if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
         //-------------------------------create s3 link--------------------------------------------------------//
+       if(files[0].fieldname!=="profileImage"){return res.status(400).send({status:false,message:"Name of filed is not correct"})}
         if (files) {
+
             const url = await uploadFile(files[0]) //fileupload on aws
-            data.profileImage = url //bucketlink stored on profileimage 
+            data.profileImage = url //bucketlink stored on profileimage
+            
+            
         } else {
             return res.status(400).send({ status: true, message: "profile is mandatory" })
         }
