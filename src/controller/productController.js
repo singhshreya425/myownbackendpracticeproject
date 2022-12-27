@@ -1,5 +1,5 @@
 const productModel = require("../model/productModel.js")
-const { validImage, isValidStreet, isValidPrice, isValidAvailableSizes, validName, isValidObjectIds, isValid } = require("../validation/validation")
+const { isValidInstallment, isValidStreet, isValidPrice, isValidAvailableSizes, validName, isValidObjectIds, isValid } = require("../validation/validation")
 const { uploadFile } = require('../aws/aws.js')
 const createProduct = async function (req, res) {
     try {
@@ -9,7 +9,7 @@ const createProduct = async function (req, res) {
 
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required inside request body" })
         //-----------------------------------Destructuring user body data------------------------------------------------------//
-        let { title, description, price, productImage, style, availableSizes, currencyId, currencyFormat } = data
+        let { title, description, price, productImage, style, availableSizes, currencyId, currencyFormat,installments } = data
 
 
         if (!title) return res.status(400).send({ status: false, message: "title is required" })
@@ -20,11 +20,11 @@ const createProduct = async function (req, res) {
 
 
         if (!isValidStreet(description)) return res.status(400).send({ status: false, message: "description is not valid" })
-        if (currencyId) {
+        if (currencyId || currencyId == '') {
             if (currencyId != "INR") return res.status(400).send({ status: false, message: "currencyId must be INR" })
         }
 
-        if (currencyFormat) {
+        if (currencyFormat || currencyFormat == '') {
             if (currencyFormat != 'Rs') return res.status(400).send({ status: false, message: "currencyformate must be 'Rs' formate" })
         }
 
@@ -48,7 +48,6 @@ const createProduct = async function (req, res) {
 
         if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes is missing" })
         if (!isValidStreet(availableSizes)) availableSizes = availableSizes.split(",").map((a) => a.trim())
-
         //if (!isValidAddress((availableSizes)))return res.status(400). send({ status: false, message: "availabelSizes contains Array of String value" })
 
         let validSize = (value) => { return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(value) !== -1 }
@@ -64,7 +63,12 @@ const createProduct = async function (req, res) {
         //     continue
         // else {
         //   if (!arr.includes(availableSizes[i]))
-
+         //-----------------------------------validation for installments----------------------------------------------------//
+         if(installments || installments == ''){
+            if(!isValid(installments)){ return res.status(400).send({status:false,message:" Please enter valid installments"})}
+            if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Provide valid installments number!"})
+            data.installments =installments
+        }
         let checktitle = await productModel.findOne({ title: title })
         if (checktitle != null) return res.status(400).send({ status: false, message: "this title is already present" })
         let result = await productModel.create(data)
@@ -219,7 +223,13 @@ const updateProducts = async function (req, res) {
                 }
             }
         }
-
+         //-------------------------------------validation for installments-----------------------------------------------//
+         if(installments || installments == ''){
+            if(!isValid(installments)){ return res.status(400).send({status:false,message:" Please enter valid installments"})}
+            if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Provide valid installments number!"})
+            data.installments =installments
+        }
+        
         const updateProduct = await productModel.findByIdAndUpdate({ _id: productId }, data, { new: true })
         return res.status(200).send({ status: true, message: "Product updated successfully", data: updateProduct })
 
