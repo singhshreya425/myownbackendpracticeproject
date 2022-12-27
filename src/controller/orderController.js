@@ -1,6 +1,7 @@
 const orderModel =require("../model/orderModel")
 const cartModel =require("../model/cartModel")
 const { isValidObjectIds,isValid,isValidStatus} = require("../validation/validation")
+//==============================================function for createOrder=================================================//
 const createOrder = async function(req,res){
     try{
         let userId =req.params.userId
@@ -39,7 +40,7 @@ const createOrder = async function(req,res){
         let orderCreate=await orderModel.create(obj)
         //-----------------------------update or delete that cartData in db--------------------------//
         cartModel.findOneAndUpdate({_id:cartId},{items:[],totalItems:0,totalPrice:0})
-        //---------------------------return response for successful order creattion-------------------//
+        //---------------------------return response for successful order creation-------------------//
         return res.status(201).send({status:true,message:"Success",data:orderCreate})
  
     }
@@ -48,7 +49,7 @@ const createOrder = async function(req,res){
     }
 }
 
-//==========================================function for created========================================================//
+//==========================================function for updateOrder========================================================//
 const updateOrder = async function(req,res){
     try{
         let userId =req.params.userId

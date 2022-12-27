@@ -8,7 +8,7 @@ app.use(express.json())
 app.use(multer().any())
 
 app.use(express.urlencoded({ extended: true }))
-mongoose.set('strictQuery', true)
+mongoose.set('strictQuery', true)//Deprication error
 mongoose.connect(process.env.DB,
     { useNewUrlParser: true })
     .then(() => console.log(("MongoDb is connected")))
