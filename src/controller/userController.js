@@ -74,7 +74,8 @@ const createUser = async function (req, res) {
         if (!validPhone(phone)) { return res.status(400).send({ status: false, mesaage: "phone number is in wrong format" }) }
         //   if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
         //-------------------------------create s3 link--------------------------------------------------------//
-       if(files[0].fieldname!=="profileImage"){return res.status(400).send({status:false,message:"Name of filed is not correct"})}
+        if(! profileImage) return res.status(400).send({status:false,message:"Profile image is mandatory"})   
+        if(files[0].fieldname!=="profileImage"){return res.status(400).send({status:false,message:"Name of filed is not correct"})}
         if (files) {
 
             const url = await uploadFile(files[0]) //fileupload on aws
@@ -141,12 +142,14 @@ const loginUser = async function (req, res) {
 const getUser = async function(req, res)  {
 
     try {
-        const paramId = req.params.userId
-
-        if (!paramId) { return res.status(400).send({ status: false, message: "User id is required in params" }) }
-        if (!isValidObjectIds(paramId)) return res.status(400).send({ status: false, messsge: "Invalid user Id" })
-
-        const getData = await userModel.findById({ _id: paramId });
+        let userId= req.params.userId
+        let tokenUserId = req.decode.userId
+       
+      //  if (!userId) { return res.status(400).send({ status: false, message: "User id is required in params" }) }
+        if (!isValidObjectIds(userId)) return res.status(400).send({ status: false, messsge: "Invalid user Id" })
+        //------------------------userId matches from the token for authorization purpose-------------------------------//
+        if(userId!==tokenUserId){return res.status(403).send({status:false,message:"you are not authorized user"})}
+        const getData = await userModel.findById({ _id: userId });
 
         if (!getData) { return res.status(404).send({ status: false, message: "User id is not present in DB" }) }
 

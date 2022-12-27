@@ -9,7 +9,7 @@ const{createOrder,updateOrder}= require("../controller/orderController")
 
 router.post("/register",createUser)
 router.post("/login",loginUser)
-router.get("/user/:userId/profile",authenticate ,getUser)
+router.get("/user/:userId/profile",authenticate,getUser)
 router.put("/user/:userId/profile",authenticate,authorize,updateUser)
 router.post("/products",createProduct)
 router.get("/products",filterProduct)
