@@ -59,7 +59,7 @@ const createProduct = async function (req, res) {
                 data.availableSizes = availableSizes
             }
         }
-        if(!isValid(productImage))return res.status(400).send({status:false,message:"product Image is in wrong format"})
+        //if(!isValid(productImage))return res.status(400).send({status:false,message:"product Image is in wrong format"})
         // if (availableSizes[i] == ",")
         //     continue
         // else {
@@ -225,7 +225,7 @@ const updateProducts = async function (req, res) {
             }
         }
          //-------------------------------------validation for installments-----------------------------------------------//
-         if(installments || installments == ''){
+           if (data.installments){
             if(!isValid(installments)){ return res.status(400).send({status:false,message:" Please enter valid installments"})}
             if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Provide valid installments number!"})
             data.installments =installments
