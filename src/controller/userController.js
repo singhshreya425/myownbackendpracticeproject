@@ -1,6 +1,6 @@
 const userModel = require("../model/userModel.js")
 const jwt = require('jsonwebtoken')
-const { validName, isValid, validEmail, isValidPassword, validPhone, validImage, isValidPincode, isValidObjectIds, isValidStreet } = require("../validation/validation")
+const { isValidInstallment,validName, isValid, validEmail, isValidPassword, validPhone, validImage, isValidPincode, isValidObjectIds, isValidStreet } = require("../validation/validation")
 const { uploadFile } = require('../aws/aws.js')
 const bcrypt = require("bcrypt")
 
@@ -72,21 +72,18 @@ const createUser = async function (req, res) {
             if (isDuplicateEmail.phone == phone) { return res.status(400).send({ status: false, message: `this phone:${phone} is already exist` }) }
         }
         if (!validPhone(phone)) { return res.status(400).send({ status: false, mesaage: "phone number is in wrong format" }) }
-        //   if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
-        //-------------------------------create s3 link--------------------------------------------------------//
-        
-        if(!profileImage)
-        if(files[0].fieldname!=="profileImage"){return res.status(400).send({status:false,message:"Name of filed is not correct"})}
-        if (files) {
+         // if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
+        //===================== Checking the File is present or not and Create S3 Link =====================//
+   
+        if (files && files.length > 0) {
 
             const url = await uploadFile(files[0]) //fileupload on aws
-            data.profileImage = url //bucketlink stored on profileimage
-            
-            
+            data.profileImage = url //bucketlink stored on profileimage 
         } else {
-            return res.status(400).send({ status: true, message: "profile is mandatory" })
+            return res.status(400).send({ status: true, message: "profile image is mandatory" })
         }
-        let userCreated = await userModel.create(data)
+
+     let userCreated = await userModel.create(data)
         return res.status(201).send({ status: true, message: "Data created succsesfully", data: userCreated })
     }
     catch (error) {
