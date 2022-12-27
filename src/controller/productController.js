@@ -59,6 +59,7 @@ const createProduct = async function (req, res) {
                 data.availableSizes = availableSizes
             }
         }
+        if(!isValid(productImage))return res.status(400).send({status:false,message:"product Image is in wrong format"})
         // if (availableSizes[i] == ",")
         //     continue
         // else {

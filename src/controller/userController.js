@@ -74,7 +74,8 @@ const createUser = async function (req, res) {
         if (!validPhone(phone)) { return res.status(400).send({ status: false, mesaage: "phone number is in wrong format" }) }
         //   if (!validImage(profileImage)) { return res.status(400).send({ status: false, message: "profileImage should be in wrong format" }) }
         //-------------------------------create s3 link--------------------------------------------------------//
-        if(!isValid(profileImage)){return res.status(400).send({status:false,message:"profile image is in wrong format"})}
+        
+        if(!profileImage)
         if(files[0].fieldname!=="profileImage"){return res.status(400).send({status:false,message:"Name of filed is not correct"})}
         if (files) {
 
