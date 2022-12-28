@@ -77,19 +77,19 @@ const createCart = async function (req, res)  {
                     }
                 }
 
-            //     //===================== Pushing the Object into items Array =====================//
-            //     items.push({ productId: productId, quantity: quantity })
-            //     let tPrice = checkCart.totalPrice + (quantity * Price)
+                //===================== Pushing the Object into items Array =====================//
+                items.push({ productId: productId, quantity: quantity })
+                let tPrice = checkCart.totalPrice + (quantity * Price)
 
-            //     //===================== Push the Key and Value into Object =====================//
-            //     object.items = items
-            //     object.totalPrice = tPrice
-            //     object.totalItems = items.length
+                //===================== Push the Key and Value into Object =====================//
+                object.items = items
+                object.totalPrice = tPrice
+                object.totalItems = items.length
 
-            //     //===================== Update Cart document =====================//
-            //     let update1Cart = await cartModel.findOneAndUpdate({ _id: cartId }, { $set: object }, { new: true }).populate('items.productId')
+                //===================== Update Cart document =====================//
+                let update1Cart = await cartModel.findOneAndUpdate({ _id: cartId }, { $set: object }, { new: true }).populate('items.productId')
 
-            //     return res.status(201).send({ status: true, message: "Success", data: update1Cart })
+                return res.status(201).send({ status: true, message: "Success", data: update1Cart })
 
             } 
 
@@ -111,7 +111,7 @@ const createCart = async function (req, res)  {
                 let totalPrice = quantity * Price
 
                 //===================== Pushing the Object into items Arr =====================//
-               // arr.push({ productId: productId, quantity: quantity })
+               arr.push({ productId: productId, quantity: quantity })
                 
                 //===================== Create a object for Create Cart =====================//
                 let obj = {

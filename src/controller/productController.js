@@ -85,10 +85,11 @@ const filterProduct = async function (req, res) {
         let filter = { isDeleted: false }
         let { size, name, priceLessThan, priceGreaterThan, priceSort } = obj
 
+        if(!obj){
         if (Object.keys(obj).length === 0) {
             return res.status(400).send({ status: false, message: "Please give some parameters." })
         }
-
+    }
         if (Object.keys(obj).length != 0) {
 
             if (size) {
