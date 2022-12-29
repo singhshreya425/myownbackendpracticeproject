@@ -31,15 +31,17 @@ const createProduct = async function (req, res) {
 
         if (!price) return res.status(400).send({ status: false, message: "price is required" })
 
+    
         if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is not valid" })
-
-        if (files && files.length > 0) {
-
-            const url = await uploadFile(files[0]) //fileupload on aws
-            data.productImage = url //bucketlink stored on profileimage 
-        } else {
-            return res.status(400).send({ status: true, message: "product image is mandatory" })
-        }
+     //===================== Checking the ProductImage is present or not and Validate the ProductImage =====================//
+     if (files && files.length > 0) {
+        if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
+        if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
+        let uploadedFileURL = await uploadFile(files[0])
+        data.productImage = uploadedFileURL
+    } else {
+        return res.status(400).send({ message: "Product Image is Mandatory! Please input image of the Product." })
+    }  
 
 
         if (!style) return res.status(400).send({ status: false, message: "style is missing" })
@@ -59,8 +61,7 @@ const createProduct = async function (req, res) {
                 data.availableSizes = availableSizes
             }
         }
-        //if(!isValid(productImage))return res.status(400).send({status:false,message:"product Image is in wrong format"})
-        // if (availableSizes[i] == ",")
+     // if (availableSizes[i] == ",")
         //     continue
         // else {
         //   if (!arr.includes(availableSizes[i]))
@@ -188,12 +189,15 @@ const updateProducts = async function (req, res) {
                 return res.status(400).send({ status: false, message: "Price should be in Number format" })
             }
         }
-        //--------------------------------------upload file-------------------------------------------------------//
-        //-------------------------------create s3 link--------------------------------------------------------//
-        if (files && files.length > 0) {
-            const url = await uploadFile(files[0]) //fileupload on aws
-            data.productImage = url //bucketlink stored on profileimage 
-        }
+      //===================== Checking the ProductImage is present or not and Validate the ProductImage =====================//
+      if (files && files.length > 0) {
+        if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
+        if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
+        let uploadedFileURL = await uploadFile(files[0])
+        data.productImage = uploadedFileURL
+    } else {
+        return res.status(400).send({ message: "Product Image is Mandatory! Please input image of the Product." })
+    } 
         if (data.isFreeShipping) {
             if (!(data.isFreeShipping == "true" || data.isFreeShipping == "false")) {
                 return res.status(400).send({ status: false, message: "Please enter a boolean value for isFreeShipping" })

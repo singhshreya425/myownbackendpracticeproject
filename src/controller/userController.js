@@ -77,18 +77,15 @@ const createUser = async function (req, res) {
         //===================== Checking the File is present or not and Create S3 Link =====================//
    
         if (files && files.length > 0) {
-           
-            const url = await uploadFile(files[0]) //fileupload on aws
-            data.profileImage = url //bucketlink stored on profileimage 
+
+            if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
+            if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
+
+            data.profileImage = await uploadFile(files[0])  //fileupload on aws=>bucketlink stored on profileimage
         }
-        // if(files.mimetype!==/^\.(gif|jpe?g|tiff?|png|webp|bmp)$/){
-        //     return res.status(400).send({status:false,message:"profile is not valid type"})
-        //    }
-        //
-         else {
-            return res.status(400).send({ status: true, message: "profile image is mandatory" })
+        else {
+            return res.status(400).send({ msg: "Please put image to create registration!" })
         }
-         
         
 
      let userCreated = await userModel.create(data)
