@@ -163,7 +163,7 @@ const updateCart = async function (req, res)  {
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required inside request body" })
 
         //===================== Checking the RemoveProduct Value =====================//
-        if (!isValid(removeProduct)) { return res.status(400).send({ status: false, message: "RemoveProduct is Mandatory." }) }
+        //if (!isValid(removeProduct)) { return res.status(400).send({ status: false, message: "RemoveProduct is Mandatory." }) }
         if (removeProduct != 0 && removeProduct != 1) { return res.status(400).send({ status: false, message: "RemoveProduct must be 0 or 1!" }) }
 
         //===================== Validation for CartID =====================//

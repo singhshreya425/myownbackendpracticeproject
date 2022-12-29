@@ -67,7 +67,7 @@ const createProduct = async function (req, res) {
          //-----------------------------------validation for installments----------------------------------------------------//
          if(installments || installments == ''){
             if(!isValid(installments)){ return res.status(400).send({status:false,message:" Please enter valid installments"})}
-            if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Provide valid installments number!"})
+            if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Pls Provide installments in number!"})
             data.installments =installments
         }
         let checktitle = await productModel.findOne({ title: title })
@@ -185,7 +185,7 @@ const updateProducts = async function (req, res) {
         if (titleCheck) { return res.status(400).send({ status: false, message: "this title is already existng" }) }
         if (data.price) {
             if (!isValidPrice(data.price)) {
-                return res.status(400).send({ status: false, message: "Price is not in correct format" })
+                return res.status(400).send({ status: false, message: "Price should be in Number format" })
             }
         }
         //--------------------------------------upload file-------------------------------------------------------//

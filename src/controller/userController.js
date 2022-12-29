@@ -24,7 +24,8 @@ const createUser = async function (req, res) {
         if (!address || address == '') return res.status(400).send({ status: false, message: "address is required" })
 
         if (data.address || data.address == "") {            // Validate address
-            data.address = JSON.parse(data.address);
+            data.address = JSON.parse(data.address);  //parse json string into JS object
+
             if (!isValid(data.address)) {
                 return res.status(400).send({ status: false, message: "Please provide address details!" });
             }
@@ -76,12 +77,19 @@ const createUser = async function (req, res) {
         //===================== Checking the File is present or not and Create S3 Link =====================//
    
         if (files && files.length > 0) {
-
+           
             const url = await uploadFile(files[0]) //fileupload on aws
             data.profileImage = url //bucketlink stored on profileimage 
-        } else {
+        }
+        // if(files.mimetype!==/^\.(gif|jpe?g|tiff?|png|webp|bmp)$/){
+        //     return res.status(400).send({status:false,message:"profile is not valid type"})
+        //    }
+        //
+         else {
             return res.status(400).send({ status: true, message: "profile image is mandatory" })
         }
+         
+        
 
      let userCreated = await userModel.create(data)
         return res.status(201).send({ status: true, message: "Data created succsesfully", data: userCreated })

@@ -30,7 +30,7 @@ const authorize = async function (req, res, next) {
     if (!userAccessing) {return res.status(404).send({status: false,message: "Error! Please check userid and try again" }); }
     
 
-    if (userAccessing["_id"].toString()!== userLoggedIn.userId) {
+    if (userAccessing["_id"].toString()!== userLoggedIn.userId) {     //string representation of object
       return res.status(403).send({status: false,msg: "Error, authorization failed"});
     }
     
@@ -42,3 +42,5 @@ const authorize = async function (req, res, next) {
 };
 
 module.exports = {authenticate,authorize}
+
+
