@@ -86,6 +86,9 @@ return  ["pending", "completed", "cancelled"].indexOf(value)!==-1
 //---------------------------------------validation for installments-------------------------------------//
 const isValidInstallment = (value) => {
      return (/^[0-9]+$/).test(value) }
-//-------------------------------------------module export---------------------------------------------// 
 
-module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice, isValidAvailableSizes,validName,isValidNum,isValidStatus,isValidInstallment}
+//--------------------------------------validation for title--------------------------------------------//
+const isValidProdName = (value) => { return (/^[A-Za-z]+|[A-Za-z]+\[0-9]+$/).test(value) }
+//------------------------------------------module export---------------------------------------------// 
+
+module.exports={validName,isValid,validEmail,isValidPassword,validPhone,validImage,isValidPincode,isValidObjectIds, isValidStreet,isValidPrice, isValidAvailableSizes,validName,isValidNum,isValidStatus,isValidInstallment,isValidProdName}

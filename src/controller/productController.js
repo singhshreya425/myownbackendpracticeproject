@@ -1,85 +1,114 @@
 const productModel = require("../model/productModel.js")
-const { isValidInstallment, isValidStreet, isValidPrice, isValidAvailableSizes, validName, isValidObjectIds, isValid } = require("../validation/validation")
+const { isValidInstallment, isValidPrice, isValidAvailableSizes, validName, isValidObjectIds, isValid,isValidProdName, validImage } = require("../validation/validation")
 const { uploadFile } = require('../aws/aws.js')
-const createProduct = async function (req, res) {
+//<<<===================== This function is used for Create Product Data =====================>>>//
+const createProduct = async (req, res) => {
+
     try {
 
         let data = req.body
         let files = req.files
 
-        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Data is required inside request body" })
-        //-----------------------------------Destructuring user body data------------------------------------------------------//
-        let { title, description, price, productImage, style, availableSizes, currencyId, currencyFormat,installments } = data
+
+        //===================== Destructuring User Body Data =====================//
+        let { title, description, price, currencyId, currencyFormat, isFreeShipping, style, availableSizes, installments, productImage } = data
+
+        //===================== Checking Mandotory Field =====================//
+        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "No data found from body! You need to put the Mandatory Fields (i.e. title, description, price, currencyId, currencyFormat, productImage). " });
 
 
-        if (!title) return res.status(400).send({ status: false, message: "title is required" })
+        //===================== Create a Object of Product =====================//
+        let obj = {}
 
-        if (!isValidStreet(title)) return res.status(400).send({ status: false, message: "title is not valid" })
+        //===================== Validation of title =====================//
+        if (!isValid(title)) { return res.status(400).send({ status: false, message: "Please enter title!" }) }
+        if (!isValidProdName(title)) { return res.status(400).send({ status: false, message: "Please mention valid title In Body!" }) }
+        obj.title = title
 
-        if (!description) return res.status(400).send({ status: false, message: "description is required" })
+        //===================== Validation of Description =====================//
+        if (!isValid(description)) return res.status(400).send({ status: false, message: "Please enter description!" });
+        obj.description = description
 
+        //===================== Validation of Price =====================//
+        if (!isValid(price)) return res.status(400).send({ status: false, message: "Please enter price!" });
+        if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "Please valid valid price In Body!" });
+        obj.price = price
 
-        if (!isValidStreet(description)) return res.status(400).send({ status: false, message: "description is not valid" })
+        //===================== Validation of CurrencyId =====================//
         if (currencyId || currencyId == '') {
-            if (currencyId != "INR") return res.status(400).send({ status: false, message: "currencyId must be INR" })
+            if (!validator.isValidBody(currencyId)) return res.status(400).send({ status: false, message: "Please enter CurrencyId!" });
+            if (currencyId != 'INR') return res.status(400).send({ status: false, message: "CurrencyId must be 'INR'!" });
+            obj.currencyId = currencyId
         }
 
+        //===================== Validation of CurrencyFormat =====================//
         if (currencyFormat || currencyFormat == '') {
-            if (currencyFormat != 'Rs') return res.status(400).send({ status: false, message: "currencyformate must be 'Rs' formate" })
+            if (!isValid(currencyFormat)) return res.status(400).send({ status: false, message: "Please enter currencyFormat!" });
+            if (currencyFormat != '₹') return res.status(400).send({ status: false, message: "Currency Format must be '₹'!" });
+            obj.currencyFormat = currencyFormat
+        }
+
+        //===================== Validation of isFreeShipping =====================//
+        if (isFreeShipping) {
+            if (!isValid(isFreeShipping)) return res.status(400).send({ status: false, message: "Please enter value of Free Shipping!" });
+            if (isFreeShipping !== 'true' && isFreeShipping !== 'false') return res.status(400).send({ status: false, message: "Please valid value of Free shipping!" });
+            obj.isFreeShipping = isFreeShipping
         }
 
 
-        if (!price) return res.status(400).send({ status: false, message: "price is required" })
+        //===================== Validation of Style =====================//
+        if (style) {
+            if (!isValid(style)) return res.status(400).send({ status: false, message: "Please enter style!" });
+            if (!validName(style)) return res.status(400).send({ status: false, message: "Please valid style!" });
+            obj.style = style
+        }
 
-    
-        if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "price is not valid" })
-     //===================== Checking the ProductImage is present or not and Validate the ProductImage =====================//
-     if (files && files.length > 0) {
-        if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
-        if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
-        let uploadedFileURL = await uploadFile(files[0])
-        data.productImage = uploadedFileURL
-    } else {
-        return res.status(400).send({ message: "Product Image is Mandatory! Please input image of the Product." })
-    }  
-
-
-        if (!style) return res.status(400).send({ status: false, message: "style is missing" })
-
-        if (!isValidStreet(style)) return res.status(400).send({ status: false, message: "style is invalid" })
-
-        if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes is missing" })
-        if (!isValidStreet(availableSizes)) availableSizes = availableSizes.split(",").map((a) => a.trim())
-        //if (!isValidAddress((availableSizes)))return res.status(400). send({ status: false, message: "availabelSizes contains Array of String value" })
-
-        let validSize = (value) => { return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(value) !== -1 }
-
+        //===================== Validation of AvailableSizes =====================//
+        if (!isValid(availableSizes)) return res.status(400).send({ status: false, message: "Please enter Size!" });
+        availableSizes = availableSizes.split(',').map((item) => item.trim())
         for (let i = 0; i < availableSizes.length; i++) {
-            if (!validSize(availableSizes[i])) {
-                return res.status(400).send({ status: false, message: `availableSizes can contain only these value` })
-            } else {
-                data.availableSizes = availableSizes
-            }
+            if (!isValidAvailableSizes(availableSizes[i])) return res.status(400).send({ status: false, message: "Please mention valid Size!" });
         }
-     // if (availableSizes[i] == ",")
-        //     continue
-        // else {
-        //   if (!arr.includes(availableSizes[i]))
-         //-----------------------------------validation for installments----------------------------------------------------//
-         if(installments || installments == ''){
-            if(!isValid(installments)){ return res.status(400).send({status:false,message:" Please enter valid installments"})}
-            if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Pls Provide installments in number!"})
-            data.installments =installments
+        obj.availableSizes = availableSizes
+
+
+        //===================== Validation of Installments =====================//
+        if (installments || installments == '') {
+            if (!isValid(installments)) return res.status(400).send({ status: false, message: "Please enter installments!" });
+            if (! isValidInstallment(installments)) return res.status(400).send({ status: false, message: "Provide valid Installments number!" });
+            obj.installments = installments
         }
-        let checktitle = await productModel.findOne({ title: title })
-        if (checktitle != null) return res.status(400).send({ status: false, message: "this title is already present" })
-        let result = await productModel.create(data)
-        res.status(201).send({ status: true, message: "Success", data: result })
+
+
+        //===================== Fetching Title of Product from DB and Checking Duplicate Title is Present or Not =====================//
+        const isDuplicateTitle = await productModel.findOne({ title: title });
+        if (isDuplicateTitle) {
+            return res.status(400).send({ status: false, message: "Title is Already Exists, Please Enter Another Title!" });
+        }
+
+
+        //===================== Checking the ProductImage is present or not and Validate the ProductImage =====================//
+        if (files && files.length > 0) {
+            if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
+            if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
+            let uploadedFileURL = await uploadFile(files[0])
+            obj.productImage = uploadedFileURL
+        } else {
+            return res.status(400).send({ message: "Product Image is Mandatory! Please input image of the Product." })
+        }
+
+
+        //x===================== Final Creation of Product =====================x//
+        let createProduct = await productModel.create(obj)
+
+        return res.status(201).send({ status: true, message: "Success", data: createProduct })
+
     } catch (error) {
-        res.status(500).send({ status: false, message: error.message })
+
+        return res.status(500).send({ status: false, error: error.message })
     }
 }
-
+//<<<===================== This function is used for Get Data of Products =====================>>>//
 const filterProduct = async function (req, res) {
     try {
         let obj = req.query
@@ -136,6 +165,7 @@ const filterProduct = async function (req, res) {
         return res.status(500).send({ error: error.message })
     }
 }
+//<<<===================== This function is used for Get Data of Products By Path Param =====================>>>//
 const productsById = async function (req, res) {
     try {
 
@@ -162,89 +192,124 @@ const productsById = async function (req, res) {
         res.status(500).send({ status: "false", message: error.message })
     }
 }
+//<<<===================== This function is used for Update Products Data By Path Param =====================>>>//
 
-const updateProducts = async function (req, res) {
+const updateProducts = async function (req, res)  {
+
     try {
-        //-------------------------------------validation for projectID ---------------------------------------------//
-        let productId = req.params.productId
 
         let data = req.body
+
         let files = req.files
 
-        if (!isValidObjectIds(productId)) { return res.status(400).send({ status: false, message: "this productId is not valid" }) }
-        const existingProduct = await productModel.findById({ _id: productId })
-        if (!existingProduct) { return res.status(404).send({ status: false, message: "this product is not found" }) }
-        if (existingProduct.isDeleted == true) {
-            return res.status(404).send({ status: false, message: "This product is not found" })
-        }
-        if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "data can't be empty" })
+        let productId = req.params.productId
+        //===================== Destructuring User Body Data ===========================================//
 
-        if (data.title) {
-            if (!isValid(data.title)) { return res.status(400).send({ status: false, message: "title is not valid" }) }
-        }
-        const titleCheck = await productModel.findOne({ title: data.title })
-        if (titleCheck) { return res.status(400).send({ status: false, message: "this title is already existng" }) }
-        if (data.price) {
-            if (!isValidPrice(data.price)) {
-                return res.status(400).send({ status: false, message: "Price should be in Number format" })
-            }
-        }
-      //===================== Checking the ProductImage is present or not and Validate the ProductImage =====================//
-      if (files && files.length > 0) {
-        if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
-        if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
-        let uploadedFileURL = await uploadFile(files[0])
-        data.productImage = uploadedFileURL
-    } else {
-        return res.status(400).send({ message: "Product Image is Mandatory! Please input image of the Product." })
-    } 
-        if (data.isFreeShipping) {
-            if (!(data.isFreeShipping == "true" || data.isFreeShipping == "false")) {
-                return res.status(400).send({ status: false, message: "Please enter a boolean value for isFreeShipping" })
-            }
-        }
-        if (data.style) {
-            if (!isValidStreet(data.style)) return res.status(400).send({ status: false, message: "style is invalid" })
+        let { title, description, price, isFreeShipping, style, availableSizes, installments, productImage } = data
 
-            if (!isValid(data.style)) {
-                return res.status(400).send({ status: false, message: "style is not correct format" })
+        //===================== Checking the ProductId is Valid or Not by Mongoose =====================//
+
+        if (!isValidObjectIds(productId)) return res.status(400).send({ status: false, message: `Please Enter Valid ProductId: ${productId}` })
+
+        //===================== Checking Body ==========================================================//
+
+        if (  (Object.keys(data).length == 0) && !(files)) return res.status(400).send({ status: false, message: "You have to put atleast one key to update Product (i.e. title, description, price, isFreeShipping, style, availableSizes, installments, productImage). " });
+
+             //===================== Create a Object of Product ===============================================//
+        let obj = {}
+
+        //===================== Validation of title ======================================================//
+
+        if (title || title == '') {
+
+            if (!isValid(title)) { return res.status(400).send({ status: false, message: "Please enter title!" }) }
+
+            if (!isValidProdName(title)) { return res.status(400).send({ status: false, message: "Please mention valid title In Body!" }) }
+
+            //===================== Fetching Title of Product from DB and Checking Duplicate Title is Present or Not =====================//
+            let isDuplicateTitle = await productModel.findOne({ title: title });
+
+            if (isDuplicateTitle) {
+
+                return res.status(400).send({ status: false, message: "Title is Already Exists, Please Enter Another One Title!" });
             }
 
+            obj.title = title
         }
 
-        if (data.availableSizes) {
-            if (!isValidStreet(availableSizes))
-                availableSizes = JSON.parse(availableSizes)
-            //if (!isValidAddress((availableSizes)))return res.status(400). send({ status: false, message: "availabelSizes contains Array of String value" })
+        //===================== Validation of Description =======================================//
 
-            let arr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+        if (description || description == '') {
+            if (!isValid(description)) return res.status(400).send({ status: false, message: "Please enter description!" });
+
+            obj.description = description
+        }
+
+        //===================== Validation of Price =============================================//
+        if (price || price == '') {
+
+            if (! isValid(price)) return res.status(400).send({ status: false, message: "Please enter price!" });
+
+            if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "Please valid valid price In Body!" });
+            obj.price = price
+        }
+
+        //===================== Validation of isFreeShipping =====================//
+        if (isFreeShipping || isFreeShipping == '') {
+
+            if (isFreeShipping !== 'true' && isFreeShipping !== 'false') return res.status(400).send({ status: false, message: "Please valid value of Free shipping!" });
+            obj.isFreeShipping = isFreeShipping
+        }
+
+        //===================== Checking the ProductImage is present or not and Validate the ProductImage =====================//
+        if (productImage == '') return res.status(400).send({ status: false, message: "You have to put image while choosing productImage" })
+        if (files && files.length > 0) {
+
+            if (files.length > 1) return res.status(400).send({ status: false, message: "You can't enter more than one file for Create!" })
+            if (!validImage(files[0]['originalname'])) { return res.status(400).send({ status: false, message: "You have to put only Image." }) }
+            let uploadedFileURL = await uploadFile(files[0])
+            obj.productImage = uploadedFileURL
+        }
+
+        //===================== Validation of Style =====================//
+        if (style || style == '') {
+            if (! isValid(style)) return res.status(400).send({ status: false, message: "Please enter style!" });
+            if (!validName(style)) return res.status(400).send({ status: false, message: "Please valid style!" });
+            obj.style = style
+        }
+
+        //===================== Validation of AvailableSizes =====================//
+        if (availableSizes || availableSizes == '') {
+            if (! isValid(availableSizes)) return res.status(400).send({ status: false, message: "Please enter Size!" });
+            availableSizes = availableSizes.split(',').map((item) => item.trim())
             for (let i = 0; i < availableSizes.length; i++) {
-                if (availableSizes[i] == ",")
-                    continue
-                else {
-                    if (!arr.includes(availableSizes[i]))
-                        return res.
-                            status(400).
-                            send({ status: false, message: `availableSizes can contain only these value [${arr}]` })
-                }
+                if (!isValidAvailableSizes(availableSizes[i])) return res.status(400).send({ status: false, message: "Please mention valid Size!" });
             }
+            obj.availableSizes = availableSizes
         }
-         //-------------------------------------validation for installments-----------------------------------------------//
-           if (data.installments){
-            if(!isValid(installments)){ return res.status(400).send({status:false,message:" Please enter valid installments"})}
-            if(!isValidInstallment(installments)) return res.status(400).send({status:false,message:"Provide valid installments number!"})
-            data.installments =installments
-        }
-        
-        const updateProduct = await productModel.findByIdAndUpdate({ _id: productId }, data, { new: true })
-        return res.status(200).send({ status: true, message: "Product updated successfully", data: updateProduct })
-
-
-    }
-    catch (error) {
-        return res.status(500).send({ status: false, message: error.message })
-    }
+ //===================== Validation of Installments =====================//
+ if (installments || installments == '') {
+    if (! isValid(installments)) return res.status(400).send({ status: false, message: "Please enter installments!" });
+    if (!isValidInstallment(installments)) return res.status(400).send({ status: false, message: "Provide valid Installments number!" });
+    obj.installments = installments
 }
+
+
+//x===================== Fetching All Product Data from Product DB then Update the values =====================x//
+let updateProduct = await productModel.findOneAndUpdate({ isDeleted: false, _id: productId }, { $set: obj }, { new: true })
+
+//x===================== Checking the Product is Present or Not =====================x//
+if (!updateProduct) { return res.status(404).send({ status: false, message: "Product is not found or Already Deleted!" }); }
+
+return res.status(200).send({ status: true, message: "Success", data: updateProduct })
+
+} catch (error) {
+
+return res.status(500).send({ status: false, message: error.message })
+}
+}
+
+//<<<===================== This function is used for Delete Product Data By Path Param =====================>>>//
 const deleteProductById = async function (req, res) {
     try {
         let productId = req.params.productId
